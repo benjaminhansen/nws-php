@@ -3,7 +3,7 @@
 Provides an intuitive interface to use the NWS REST API in any PHP application.
 
 ## Installation
-```composer require benjaminhansen/nsw-php```
+```composer require benjaminhansen/nws-php```
 
 ## Usage
 Setup the API

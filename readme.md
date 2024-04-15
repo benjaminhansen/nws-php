@@ -25,12 +25,14 @@ $app_domain = "website/url";
 $app_contact = "email/phone";
 $api = new Api($app_domain, $app_contact);
 
+
 /*
 **  We can set a timezone for the entire API callstack.
 **  All datetime objects will be converted to this timestamp.
 */
 $timezone = "America/Chicago";
 $api->setTimezone($timezone);
+
 
 /*
 **  We can provide lat/lon coordinates for a specific location

@@ -43,6 +43,9 @@ $lon = -96.7970;
 $location = $api->getLocation($lat, $lon);
 
 
+/*
+**  Get the location's county information
+*/
 $county = $location->county();
 echo $county->name();
 echo $county->id();
@@ -52,12 +55,18 @@ var_dump($county->timezone());
 var_dump($county->timezones());
 
 
+/*
+**  Get any active alerts for the location and loop through them
+*/
 $alerts = $location->activeAlerts()->get();
 foreach($alerts as $alert) {
     // do something with each alert
 }
 
 
+/*
+** Get current observations from the nearest observation station to your location
+*/
 $observations = $location->latestObservations();
 $raw_data = $observations->raw();
 var_dump($raw_data);

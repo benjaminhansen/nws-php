@@ -48,5 +48,5 @@ $raw_data = $observations->raw();
 var_dump($raw_data);
 
 echo $observations->temperature();
-echo $observations()->dewpoint();
+echo $observations->dewpoint();
 ```

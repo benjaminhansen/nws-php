@@ -9,7 +9,8 @@ composer require benjaminhansen/nws-php
 
 ## Usage
 Notes
-* All datetime fields are automatically returned as Carbon objects
+* All datetime fields are automatically returned as a <code>Carbon</code> object
+* Any timezone fields are automatically returned as a PHP <code>DateTimeZone</code> object
 * A <code>raw()</code> method is available on most calls to print out the raw API data
 
 Setup the API

@@ -57,6 +57,14 @@ var_dump($county->timezones());
 
 
 /*
+** Get information about the location
+*/
+echo $location->radarStationId();
+echo $location->city();
+var_dump($location->state());
+
+
+/*
 **  Get any active alerts for the location and loop through them
 */
 $alerts = $location->activeAlerts()->get();
@@ -74,4 +82,5 @@ var_dump($raw_data);
 
 echo $observations->temperature();
 echo $observations->dewpoint();
+// other methods are available for the other data points as well
 ```

@@ -3,11 +3,12 @@
 Provides an intuitive interface to use the NWS REST API in any PHP application.
 
 ## Installation
-<code>composer require benjaminhansen/nsw-php</code>
+```composer require benjaminhansen/nsw-php```
 
 ## Usage
 Setup the API
-<code>
+
+```
 use NWS\Api;
 
 // instantiate our API object
@@ -46,5 +47,4 @@ var_dump($raw_data);
 
 echo $observations->temperature();
 echo $observations()->dewpoint();
-
-</code>
+```

@@ -26,7 +26,6 @@ $lon = -96.7970;
 $location = $api->getLocation($lat, $lon);
 
 
-
 $county = $location->county();
 echo $county->name();
 echo $county->id();

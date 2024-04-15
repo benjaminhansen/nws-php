@@ -1,0 +1,6 @@
+composer.lock
+.env
+vendor/
+cache/
+.DS_Store
+tests/example.php

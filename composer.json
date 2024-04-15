@@ -1,0 +1,29 @@
+{
+  "name":"benjaminhansen/nws-php",
+  "type":"library",
+  "description":"A wrapper for the National Weather Service REST API (https://api.weather.gov).",
+  "keywords":["weather", "national weather service", "nws", "api", "restful"],
+  "license":"MIT",
+  "homepage":"https://github.com/benjaminhansen/nws-php",
+  "authors": [
+      {
+          "name": "BJ Hansen",
+          "email": "bjhansen@benjaminhansen.net",
+          "homepage": "https://benjaminhansen.net"
+      }
+  ],
+  "autoload": {
+    "psr-4": {
+      "NWS\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^7.8",
+    "nesbot/carbon": "^3.2",
+    "vlucas/phpdotenv": "^5.6",
+    "phpfastcache/phpfastcache": "^9.2"
+  }
+}

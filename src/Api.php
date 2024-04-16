@@ -47,6 +47,12 @@ class Api
         return $this->base_url;
     }
 
+    public function setBaseUrl(string $base_url): self
+    {
+        $this->base_url = $base_url;
+        return $this;
+    }
+
     public function clearCache(): bool|self
     {
         if($this->cache->clear()) {

@@ -9,13 +9,16 @@ composer require benjaminhansen/nws-php
 
 ## Usage
 Notes
+* Requires PHP 8.1 or greater
 * All datetime fields are automatically returned as a <code>Carbon</code> object
 * Any timezone fields are automatically returned as a PHP <code>DateTimeZone</code> object
 * A <code>raw()</code> method is available on most calls to print out the raw API data
 
-Setup the API
+### Example
 
-```
+```php
+<?php
+
 use NWS\Api;
 
 /*
@@ -69,7 +72,7 @@ var_dump($location->state());
 */
 $alerts = $location->activeAlerts()->get();
 foreach($alerts as $alert) {
-    // do something with each alert
+    var_dump($alert);
 }
 
 
@@ -83,4 +86,20 @@ var_dump($raw_data);
 echo $observations->temperature();
 echo $observations->dewpoint();
 // other methods are available for the other data points as well
+
+
+/*
+** Get the current forecast for the location
+*/
+$forecast = $location->forecast();
+var_dump($forecast->raw());
+var_dump($foreast->periods()->get());
+
+
+/*
+** Get the current hourly forecast for the location
+*/
+$hourly_forecast = $location->hourlyForecast();
+var_dump($hourly_forecast->raw());
+var_dump($hourly_forecast->periods()->get());
 ```

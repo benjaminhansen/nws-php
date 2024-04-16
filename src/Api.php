@@ -5,7 +5,6 @@ namespace NWS;
 use Phpfastcache\Helper\Psr16Adapter;
 use GuzzleHttp\Client as HttpClient;
 use NWS\Features\Point;
-use Dotenv\Dotenv;
 use NWS\Features\ForecastOffice;
 use NWS\Features\ObservationStation;
 
@@ -21,16 +20,11 @@ class Api
     private $acceptable_http_codes = [200];
     public $timezone = 'UTC';
 
-    public function __construct(string $domain, string $email, string $cache_driver = 'Files', int $cache_lifetime = 3600)
+    public function __construct(string $domain, string $email, string $cache_driver = 'Files', int $cache_lifetime = 3600, string $base_url = "https://api.weather.gov")
     {
-        // build up our config library
-        $this->config = Dotenv::createImmutable(__DIR__."/../");
-        $this->config->load();
-
         // get our API base URL and store that in our cache exclusions array
         // we always want to be able to query the API status code live
-        $this->base_url = env('BASE_URL', 'https://api.weather.gov');
-        array_push($this->cache_exclusions, $this->base_url);
+        $this->base_url = $base_url;
 
         // derive our user agent for the API requests
         $this->user_agent = "($domain, $email)";

@@ -19,6 +19,8 @@ Notes
 ```php
 <?php
 
+require 'vendor/autoload.php'; // if your app it not already including this
+
 use NWS\Api;
 
 /*
@@ -68,7 +70,7 @@ var_dump($location->state());
 
 
 /*
-**  Get any active alerts for the location and loop through them
+** Get any active alerts for the location and loop through them
 */
 $alerts = $location->activeAlerts()->get();
 foreach($alerts as $alert) {
@@ -103,3 +105,8 @@ $hourly_forecast = $location->hourlyForecast();
 var_dump($hourly_forecast->raw());
 var_dump($hourly_forecast->periods()->get());
 ```
+
+## Packages Used
+* <code>guzzlehttp/guzzle</code> for all HTTP requests
+* <code>nesbot/carbon</code> for date/time parsing and formatting
+* <code>phpfastcache/phpfastcache</code> for local caching of API data to reduce direct calls to the API endpoint

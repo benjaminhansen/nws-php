@@ -113,6 +113,35 @@ var_dump($foreast->periods()->get());
 $hourly_forecast = $location->hourlyForecast();
 var_dump($hourly_forecast->raw());
 var_dump($hourly_forecast->periods()->get());
+
+
+/*
+** We can also get a specific forecast office
+** Little Rock, Arkansas for example
+*/
+$office_id = "LZK";
+$forecast_office = $api->getForecastOffice($office_id);
+echo $forecast_office->name();
+echo $forecast_office->phone();
+echo $forecast_office->email();
+echo $forecast_office->addresss();
+var_dump($forecast_office->counties());
+var_dump($forecast_office->forecastZones());
+var_dump($forecast_office->observationStations());
+var_dump($forecast_office->fireZones());
+
+
+/*
+** We can also get a specific observation station
+** Little Rock, Arkansas Airport KLIT for example
+*/
+$station_id = "KLIT";
+$observation_station = $api->getObservationStation($station_id);
+echo $observation_station->name();
+echo $observation_station->id();
+var_dump($observation_station->timezone());
+var_dump($observation_station->county());
+var_dump($observation_station->latestObservations());
 ```
 
 ## Packages Used

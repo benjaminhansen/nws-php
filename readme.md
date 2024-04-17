@@ -10,6 +10,7 @@ composer require benjaminhansen/nws-php
 ## Usage
 Notes
 * Requires PHP 8.1 or greater
+* All requests are cached locally for 1 hour by default
 * All datetime fields are automatically returned as a <code>Carbon</code> object
 * Any timezone fields are automatically returned as a PHP <code>DateTimeZone</code> object
 * A <code>raw()</code> method is available on most calls to print out the raw API data

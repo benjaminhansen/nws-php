@@ -2,7 +2,7 @@
   "name":"benjaminhansen/nws-php",
   "type":"library",
   "description":"A wrapper for the National Weather Service REST API (https://api.weather.gov).",
-  "keywords":["weather", "national weather service", "nws", "api", "restful"],
+  "keywords":["weather", "national weather service", "nws", "api", "restful", "api.weather.gov"],
   "license":"MIT",
   "homepage":"https://github.com/benjaminhansen/nws-php",
   "authors": [

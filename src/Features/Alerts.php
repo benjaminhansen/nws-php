@@ -25,7 +25,7 @@ class Alerts
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->updated))->setTimezoneIfNot($this->api->timezone);
+        return (new Carbon($this->data->updated))->setTimezoneIfNot($this->api->getTimezone()->timezone);
     }
 
     public function hasAlerts(): bool

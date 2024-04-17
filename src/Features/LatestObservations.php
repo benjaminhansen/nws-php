@@ -21,7 +21,7 @@ class LatestObservations
 
     public function timestamp(): Carbon
     {
-        return (new Carbon($this->data->properties->timestamp))->setTimezoneIfNot($this->api->timezone);
+        return (new Carbon($this->data->properties->timestamp))->setTimezoneIfNot($this->api->getTimezone()->timezone);
     }
 
     public function temperature(string $unit = "f", int $decimal_points = 0): int|float

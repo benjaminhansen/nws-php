@@ -10,7 +10,7 @@ composer require benjaminhansen/nws-php
 ## Usage
 Notes
 * Requires PHP 8.1 or greater
-* All requests are cached locally for 1 hour by default
+* All requests can be cached locally to reduce outbound requests to the API endpoint
 * All datetime fields are automatically returned as a <code>Carbon</code> object
 * Any timezone fields are automatically returned as a PHP <code>DateTimeZone</code> object
 * A <code>raw()</code> method is available on most calls to print out the raw API data
@@ -31,6 +31,14 @@ use NWS\Api;
 $app_domain = "website/url";
 $app_contact = "email/phone";
 $api = new Api($app_domain, $app_contact);
+
+
+/*
+** The cache is opt-in. To cache results locally make sure to enable the cache.
+** Sometimes, you may not want to use the cache at all, so this allows it to be toggled on/off.
+*/
+$api->useCache();
+// $api->setCacheLifetime(3600); // seconds that the cached data should persist
 
 
 /*

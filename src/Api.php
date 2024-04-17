@@ -7,25 +7,22 @@ use GuzzleHttp\Client as HttpClient;
 use NWS\Features\Point;
 use NWS\Features\ForecastOffice;
 use NWS\Features\ObservationStation;
+use DateTimeZone;
 
 class Api
 {
-    private $base_url;
-    private $user_agent;
-    private $client;
-    protected $config;
-    protected $cache;
-    private $cache_lifetime;
-    private $cache_exclusions = ['/alerts'];
-    private $acceptable_http_codes = [200];
-    public $timezone = 'UTC';
+    private string $base_url = "https://api.weather.gov";
+    private string $user_agent;
+    private HttpClient $client;
+    protected Psr16Adapter|null $cache = null;
+    private int $cache_lifetime = 3600;
+    private array $cache_exclusions = ['/alerts'];
+    private array $acceptable_http_codes = [200];
+    private string $timezone = 'UTC';
+    private string $cache_driver = 'Files';
 
-    public function __construct(string $domain, string $email, string $cache_driver = 'Files', int $cache_lifetime = 3600, string $base_url = "https://api.weather.gov")
+    public function __construct(string $domain, string $email)
     {
-        // get our API base URL and store that in our cache exclusions array
-        // we always want to be able to query the API status code live
-        $this->base_url = $base_url;
-
         // derive our user agent for the API requests
         $this->user_agent = "($domain, $email)";
 
@@ -36,10 +33,36 @@ class Api
                 'User-Agent' => $this->user_agent
             ]
         ]);
+    }
 
+    public function getCacheLifetime(): int
+    {
+        return $this->cache_lifetime;
+    }
+
+    public function setCacheLifetime(int $lifetime): self
+    {
+        $this->cache_lifetime = $lifetime;
+        return $this;
+    }
+
+    public function getCacheDriver(): string
+    {
+        return $this->cache_driver;
+    }
+
+    public function setCacheDriver(string $driver): self
+    {
+        $this->cache_driver = $driver;
+        return $this;
+    }
+
+    public function useCache(): self
+    {
         // build up our cache to store data locally for a period of time
-        $this->cache = new Psr16Adapter($cache_driver);
-        $this->cache_lifetime = $cache_lifetime;
+        $this->cache = new Psr16Adapter($this->getCacheDriver());
+        $this->cache_lifetime = $this->getCacheLifetime();
+        return $this;
     }
 
     public function getBaseUrl(): string
@@ -68,8 +91,27 @@ class Api
         return $this;
     }
 
+    public function getTimezone(): DateTimeZone
+    {
+        return new DateTimeZone($this->timezone);
+    }
+
     public function get($url): object|bool
     {
+        if(!$this->cache) {
+            // the user did not opt to use the cache
+            $http_request = $this->client->get($url);
+            $http_response_code = $http_request->getStatusCode();
+
+            if(!in_array($http_response_code, $this->acceptable_http_codes)) {
+                // sometimes the NWS API likes to include URLs that are not actually valid, so those throw 404s
+                // this accounts for those
+                return false;
+            }
+
+            return json_decode($http_request->getBody()->getContents());
+        }
+
         // key-ify the request URL to use as the unique ID in our cache
         $key = urlencode($url);
 
@@ -112,13 +154,13 @@ class Api
         return new Point($this->get($url), $this);
     }
 
-    public function getObservationStation(string $station_id)
+    public function getObservationStation(string $station_id): ObservationStation
     {
         $url = "{$this->base_url}/stations/{$station_id}";
         return new ObservationStation($this->get($url), $this);
     }
 
-    public function getForecastOffice(string $office_id)
+    public function getForecastOffice(string $office_id): ForecastOffice
     {
         $url = "{$this->base_url}/offices/{$office_id}";
         return new ForecastOffice($this->get($url), $this);

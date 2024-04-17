@@ -26,12 +26,12 @@ class ForecastPeriod
 
     public function startTime(): Carbon
     {
-        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->timezone);
+        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->getTimezone()->timezone);
     }
 
     public function endTime(): Carbon
     {
-        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->timezone);
+        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->getTimezone()->timezone);
     }
 
     public function daytime(): bool

@@ -11,10 +11,12 @@ class County
     use IsCallable;
 
     private $data;
+    private $api;
 
-    public function __construct($data)
+    public function __construct($data, $api)
     {
         $this->data = $data;
+        $this->api = $api;
     }
 
     public function id(): string

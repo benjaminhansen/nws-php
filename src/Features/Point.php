@@ -46,7 +46,7 @@ class Point
 
     public function county(): County
     {
-        return new County($this->api->get($this->properties_county()));
+        return new County($this->api->get($this->properties_county()), $this->api);
     }
 
     public function forecastGridData(): ForecastGridData
@@ -56,7 +56,7 @@ class Point
 
     public function forecastOffice(): ForecastOffice
     {
-        return new ForecastOffice($this->api->get($this->properties_forecastOffice()));
+        return new ForecastOffice($this->api->get($this->properties_forecastOffice()), $this->api);
     }
 
     public function forecast(): Forecast
@@ -82,6 +82,14 @@ class Point
     public function radarStationId(): string
     {
         return $this->properties_radarStation();
+    }
+
+    public function radarStation(): RadarStation
+    {
+        $id = $this->radarStationId();
+        $base_url = $this->api->getBaseUrl();
+        $url = "{$base_url}/radar/stations/{$id}";
+        return new RadarStation($this->api->get($url), $this->api);
     }
 
     public function timezone(): DateTimeZone

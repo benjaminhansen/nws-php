@@ -121,6 +121,6 @@ class Api
     public function getForecastOffice(string $office_id)
     {
         $url = "{$this->base_url}/offices/{$office_id}";
-        return new ForecastOffice($this->get($url));
+        return new ForecastOffice($this->get($url), $this);
     }
 }

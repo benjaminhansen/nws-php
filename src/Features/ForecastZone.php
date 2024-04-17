@@ -70,7 +70,7 @@ class ForecastZone
         $return = [];
 
         foreach($this->data->properties->forecastOffices as $office) {
-            $return[] = new ForecastOffice($this->api->get($office));
+            $return[] = new ForecastOffice($this->api->get($office), $this->api);
         }
 
         return $return;

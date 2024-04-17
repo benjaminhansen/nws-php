@@ -27,7 +27,7 @@ class ObservationStation
 
     public function county(): County
     {
-        return new County($this->api->get($this->data->properties->county));
+        return new County($this->api->get($this->data->properties->county), $this->api);
     }
 
     public function name(): string

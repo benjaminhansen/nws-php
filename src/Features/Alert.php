@@ -37,27 +37,27 @@ class Alert
 
     public function sentAt(): Carbon
     {
-        return (new Carbon($this->properties_sent()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_sent()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function effectiveAt(): Carbon
     {
-        return (new Carbon($this->properties_effective()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_effective()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function onsetAt(): Carbon
     {
-        return (new Carbon($this->properties_onset()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_onset()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function expiresAt(): Carbon
     {
-        return (new Carbon($this->properties_expires()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_expires()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function endsAt(): Carbon
     {
-        return (new Carbon($this->properties_ends()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_ends()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function status(): AlertStatus

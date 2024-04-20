@@ -18,6 +18,16 @@ class ObservationStation
         $this->data = $data;
     }
 
+    public function latitude()
+    {
+        return $this->geometry_coordinates()[1];
+    }
+
+    public function longitude()
+    {
+        return $this->geometry_coordinates()[0];
+    }
+
     public function latestObservations(): LatestObservations
     {
         $base_url = $this->data->properties->{"@id"};
@@ -43,5 +53,15 @@ class ObservationStation
     public function timezone(): DateTimeZone
     {
         return new DateTimeZone($this->data->properties->timeZone);
+    }
+
+    public function activeAlerts(): Alerts
+    {
+        $base_url = $this->api->getBaseUrl();
+        $lat = $this->latitude();
+        $lon = $this->longitude();
+        $request_url = "{$base_url}/alerts/active?point={$lat},{$lon}";
+
+        return new Alerts($this->api->get($request_url), $this->api);
     }
 }

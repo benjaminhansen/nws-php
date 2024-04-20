@@ -21,12 +21,12 @@ class Forecast
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function createdAt(): Carbon
     {
-        return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function elevation(string $unit = "ft", int $decimal_places = 0): int|float

@@ -26,7 +26,7 @@ class ForecastGridData
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->properties->updateTime))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->data->properties->updateTime))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function validTimes(): string
@@ -54,7 +54,7 @@ class ForecastGridData
         $return = [];
 
         foreach($this->data->properties->temperature->values as $temperature) {
-            $validTime = (new Carbon(explode("/", $temperature->validTime)[0]))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+            $validTime = (new Carbon(explode("/", $temperature->validTime)[0]))->setTimezoneIfNot($this->api->getTimezone());
             $value = match($unit) {
                 'f' => round(Helpers::celcius_to_fahrenheit($temperature->value), $decimal_points),
                 default => round($temperature->value, $decimal_points)

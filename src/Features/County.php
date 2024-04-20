@@ -49,4 +49,13 @@ class County
 
         return $return;
     }
+
+    public function activeAlerts(): Alerts
+    {
+        $base_url = $this->api->getBaseUrl();
+        $zone_id = $this->data->properties->id;
+        $request_url = "{$base_url}/alerts/active/zone/{$zone_id}";
+
+        return new Alerts($this->api->get($request_url), $this->api);
+    }
 }

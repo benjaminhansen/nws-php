@@ -26,12 +26,12 @@ class ForecastPeriod
 
     public function startTime(): Carbon
     {
-        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function endTime(): Carbon
     {
-        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function daytime(): bool
@@ -54,17 +54,22 @@ class ForecastPeriod
         return $this->data->windSpeed;
     }
 
-    public function windDirection()
+    public function windDirectionDegrees()
     {
         return $this->data->windDirection;
     }
 
-    public function shortForecast()
+    public function windDirectionCardinal(): string
+    {
+        return Helpers::degrees_to_cardinals($this->data->windDirection);
+    }
+
+    public function shortForecast(): string
     {
         return $this->data->shortForecast;
     }
 
-    public function longForecast()
+    public function longForecast(): string|null
     {
         return $this->data->detailedForecast;
     }
@@ -82,12 +87,12 @@ class ForecastPeriod
         return $this->data->relativeHumidity->value;
     }
 
-    public function chanceOfPrecip()
+    public function chanceOfPrecip(): float
     {
         return $this->data->probabilityOfPrecipitation->value;
     }
 
-    public function icon()
+    public function icon(): string
     {
         return $this->data->icon;
     }

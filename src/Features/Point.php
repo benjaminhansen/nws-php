@@ -92,6 +92,11 @@ class Point
         return new RadarStation($this->api->get($url), $this->api);
     }
 
+    public function fireZone(): FireZone
+    {
+        return new FireZone($this->api->get($this->data->properties->fireWeatherZone), $this->api);
+    }
+
     public function timezone(): DateTimeZone
     {
         return new DateTimeZone($this->properties_timeZone());

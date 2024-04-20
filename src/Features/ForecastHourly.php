@@ -21,12 +21,12 @@ class ForecastHourly
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->properties->updated))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->data->properties->updated))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function createdAt(): Carbon
     {
-        return (new Carbon($this->data->properties->generatedAt))->setTimezoneIfNot($this->api->getTimezone()->timezone);
+        return (new Carbon($this->data->properties->generatedAt))->setTimezoneIfNot($this->api->getTimezone());
     }
 
     public function elevation()

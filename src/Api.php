@@ -11,10 +11,10 @@ use DateTimeZone;
 
 class Api
 {
+    protected Psr16Adapter|null $cache = null;
     private string $base_url = "https://api.weather.gov";
     private string $user_agent;
     private HttpClient $client;
-    protected Psr16Adapter|null $cache = null;
     private int $cache_lifetime = 3600;
     private array $cache_exclusions = ['/alerts'];
     private array $acceptable_http_codes = [200];
@@ -148,21 +148,21 @@ class Api
         return strtolower($this->status()) == "ok";
     }
 
-    public function getLocation(float $lat, float $lon): Point
+    public function getLocation(float $lat = null, float $lon = null, string $observation_station = null, string $forecast_office = null): Point|ObservationStation|ForecastOffice
     {
-        $url = "{$this->base_url}/points/{$lat},{$lon}";
-        return new Point($this->get($url), $this);
-    }
+        if($lat && $lon) {
+            $url = "{$this->base_url}/points/{$lat},{$lon}";
+            return new Point($this->get($url), $this);
+        }
 
-    public function getObservationStation(string $station_id): ObservationStation
-    {
-        $url = "{$this->base_url}/stations/{$station_id}";
-        return new ObservationStation($this->get($url), $this);
-    }
+        if($observation_station) {
+            $url = "{$this->base_url}/stations/{$observation_station}";
+            return new ObservationStation($this->get($url), $this);
+        }
 
-    public function getForecastOffice(string $office_id): ForecastOffice
-    {
-        $url = "{$this->base_url}/offices/{$office_id}";
-        return new ForecastOffice($this->get($url), $this);
+        if($forecast_office) {
+            $url = "{$this->base_url}/offices/{$forecast_office}";
+            return new ForecastOffice($this->get($url), $this);
+        }
     }
 }

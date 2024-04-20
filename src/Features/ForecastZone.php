@@ -20,7 +20,7 @@ class ForecastZone
 
     public function timezone(int $i = 0): DateTimeZone
     {
-        return new DateTimeZone($this->data->properties->timeZone[$i]);
+        return $this->timezones()[$i];
     }
 
     public function timezones(): array
@@ -60,7 +60,7 @@ class ForecastZone
         return $return;
     }
 
-    public function observationStation(int $i = 0)
+    public function observationStation(int $i = 0): ObservationStation
     {
         return $this->observationStations()[$i];
     }
@@ -76,7 +76,7 @@ class ForecastZone
         return $return;
     }
 
-    public function forecastOffice(int $i = 0)
+    public function forecastOffice(int $i = 0): ForecastOffice
     {
         return $this->forecastOffices()[$i];
     }

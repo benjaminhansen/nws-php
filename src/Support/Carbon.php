@@ -13,7 +13,7 @@ class Carbon extends CarbonDist
 
     public function setTimezoneIfNot($timezone): self
     {
-        if($this->getTimezone() != $timezone) {
+        if($this->getTimezone()->getName() != $timezone->getName()) {
             $this->setTimezone($timezone);
         }
         return $this;

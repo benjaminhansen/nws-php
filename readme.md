@@ -129,6 +129,7 @@ var_dump($forecast_office->counties());
 var_dump($forecast_office->forecastZones());
 var_dump($forecast_office->observationStations());
 var_dump($forecast_office->fireZones());
+var_dump($forecast_office->activeAlerts()->get());
 
 
 /*
@@ -142,6 +143,7 @@ echo $observation_station->id();
 var_dump($observation_station->timezone());
 var_dump($observation_station->county());
 var_dump($observation_station->latestObservations());
+var_dump($observation_station->activeAlerts()->get());
 ```
 
 ## Packages Used

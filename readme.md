@@ -55,7 +55,7 @@ $api->setTimezone($timezone);
 */
 $lat = 32.7767;
 $lon = -96.7970;
-$location = $api->getLocation($lat, $lon);
+$location = $api->getLocation(lat: $lat, lon: $lon);
 
 
 /*
@@ -120,7 +120,7 @@ var_dump($hourly_forecast->periods()->get());
 ** Little Rock, Arkansas for example
 */
 $office_id = "LZK";
-$forecast_office = $api->getForecastOffice($office_id);
+$forecast_office = $api->getLocation(forecast_office: $office_id);
 echo $forecast_office->name();
 echo $forecast_office->phone();
 echo $forecast_office->email();
@@ -136,7 +136,7 @@ var_dump($forecast_office->fireZones());
 ** Little Rock, Arkansas Airport KLIT for example
 */
 $station_id = "KLIT";
-$observation_station = $api->getObservationStation($station_id);
+$observation_station = $api->getLocation(observation_station: $station_id);
 echo $observation_station->name();
 echo $observation_station->id();
 var_dump($observation_station->timezone());

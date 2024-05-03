@@ -9,7 +9,7 @@ composer require benjaminhansen/nws-php
 
 ## Usage
 Notes
-* Requires PHP 8.1 or greater
+* Requires PHP 8.2 or greater
 * All requests can be cached locally to reduce outbound requests to the API endpoint
 * All datetime fields are automatically returned as a <code>Carbon</code> object
 * Any timezone fields are automatically returned as a PHP <code>DateTimeZone</code> object

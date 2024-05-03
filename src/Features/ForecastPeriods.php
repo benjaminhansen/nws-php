@@ -3,6 +3,7 @@
 namespace NWS\Features;
 
 use NWS\Traits\IsCallable;
+use Illuminate\Support\Collection;
 
 class ForecastPeriods
 {
@@ -17,7 +18,7 @@ class ForecastPeriods
         $this->api = $api;
     }
 
-    public function get(): array
+    public function get(): Collection
     {
         $return = [];
 
@@ -25,7 +26,7 @@ class ForecastPeriods
             $return[] = new ForecastPeriod($period, $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function period(int $i): ForecastPeriod

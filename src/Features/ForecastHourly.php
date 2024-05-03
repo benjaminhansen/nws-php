@@ -5,6 +5,7 @@ namespace NWS\Features;
 use NWS\Support\Coordinate;
 use NWS\Traits\IsCallable;
 use NWS\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class ForecastHourly
 {
@@ -44,7 +45,7 @@ class ForecastHourly
         return (new ForecastPeriods($this->data->properties->periods, $this->api))->period($i);
     }
 
-    public function coordinates(): array
+    public function coordinates(): Collection
     {
         $return = [];
 
@@ -56,6 +57,6 @@ class ForecastHourly
             }
         }
 
-        return $return;
+        return collect($return);
     }
 }

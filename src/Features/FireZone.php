@@ -4,6 +4,7 @@ namespace NWS\Features;
 
 use DateTimeZone;
 use NWS\Traits\IsCallable;
+use Illuminate\Support\Collection;
 
 class FireZone
 {
@@ -23,7 +24,7 @@ class FireZone
         return new DateTimeZone($this->data->properties->timeZone);
     }
 
-    public function forecastOffices(): array
+    public function forecastOffices(): Collection
     {
         $return = [];
 
@@ -31,7 +32,7 @@ class FireZone
             $return[] = new ForecastOffice($this->api->get($office), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function forecastOffice(int $i = 0): ForecastOffice
@@ -39,7 +40,7 @@ class FireZone
         return $this->forecastOffices()[$i];
     }
 
-    public function observationStations(): array
+    public function observationStations(): Collection
     {
         $return = [];
 
@@ -47,7 +48,7 @@ class FireZone
             $return[] = new ObservationStation($this->api->get($station), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function observationStation(int $i = 0): ObservationStation

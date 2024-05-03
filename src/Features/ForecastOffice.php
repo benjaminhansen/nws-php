@@ -3,6 +3,7 @@
 namespace NWS\Features;
 
 use NWS\Traits\IsCallable;
+use Illuminate\Support\Collection;
 
 class ForecastOffice
 {
@@ -47,7 +48,7 @@ class ForecastOffice
         return $this->data->address;
     }
 
-    public function counties(): array
+    public function counties(): Collection
     {
         $return = [];
 
@@ -55,10 +56,10 @@ class ForecastOffice
             $return[] = new County($this->api->get($county), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
-    public function forecastZones(): array
+    public function forecastZones(): Collection
     {
         $return = [];
 
@@ -66,10 +67,10 @@ class ForecastOffice
             $return[] = new ForecastZone($this->api->get($zone), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
-    public function observationStations(): array
+    public function observationStations(): Collection
     {
         $return = [];
 
@@ -77,10 +78,10 @@ class ForecastOffice
             $return[] = new ObservationStation($this->api->get($station), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
-    public function fireZones(): array
+    public function fireZones(): Collection
     {
         $return = [];
 
@@ -88,6 +89,6 @@ class ForecastOffice
             $return[] = new FireZone($this->api->get($zone), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 }

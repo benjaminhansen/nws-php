@@ -3,6 +3,7 @@
 namespace NWS\Features;
 
 use NWS\Traits\IsCallable;
+use Illuminate\Support\Collection;
 
 class ObservationStations
 {
@@ -17,7 +18,7 @@ class ObservationStations
         $this->api = $api;
     }
 
-    public function get(): array
+    public function get(): Collection
     {
         $return = [];
 
@@ -25,7 +26,7 @@ class ObservationStations
             $return[] = new ObservationStation($station, $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function station(int $i = 0): ObservationStation

@@ -5,6 +5,7 @@ namespace NWS\Features;
 use NWS\Traits\IsCallable;
 use NWS\Support\Helpers;
 use NWS\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class ForecastGridData
 {
@@ -49,7 +50,7 @@ class ForecastGridData
         return $this->data->properties->gridY;
     }
 
-    public function temeratures(string $unit = 'f', int $decimal_points = 0): array
+    public function temeratures(string $unit = 'f', int $decimal_points = 0): Collection
     {
         $return = [];
 
@@ -66,6 +67,6 @@ class ForecastGridData
             ];
         }
 
-        return $return;
+        return collect($return);
     }
 }

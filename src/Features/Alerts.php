@@ -4,6 +4,7 @@ namespace NWS\Features;
 
 use NWS\Traits\IsCallable;
 use NWS\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class Alerts
 {
@@ -30,7 +31,7 @@ class Alerts
 
     public function hasAlerts(): bool
     {
-        return (boolean)count($this->data->features);
+        return (boolean) $this->count();
     }
 
     public function count(): int
@@ -38,7 +39,7 @@ class Alerts
         return count($this->data->features);
     }
 
-    public function get(): array
+    public function get(): Collection
     {
         $return = [];
 
@@ -46,6 +47,6 @@ class Alerts
             $return[] = new Alert($alert, $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 }

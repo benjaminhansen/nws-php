@@ -7,6 +7,7 @@ use GuzzleHttp\Client as HttpClient;
 use NWS\Features\Point;
 use NWS\Features\ForecastOffice;
 use NWS\Features\ObservationStation;
+use NWS\Exceptions\InvalidRequestException;
 use DateTimeZone;
 
 class Api
@@ -164,5 +165,7 @@ class Api
             $url = "{$this->base_url}/offices/{$forecast_office}";
             return new ForecastOffice($this->get($url), $this);
         }
+
+        throw new InvalidRequestException("Invalid API request!");
     }
 }

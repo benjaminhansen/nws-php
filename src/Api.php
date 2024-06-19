@@ -99,8 +99,8 @@ class Api
 
     public function get($url): object|bool
     {
+        // the user did not opt to use the cache
         if(!$this->cache) {
-            // the user did not opt to use the cache
             $http_request = $this->client->get($url);
             $http_response_code = $http_request->getStatusCode();
 
@@ -116,24 +116,26 @@ class Api
         // key-ify the request URL to use as the unique ID in our cache
         $key = urlencode($url);
 
+        // if there is a value in the cache for the given URL, return the cached data
         if($this->cache->has($key)) {
-            $data = $this->cache->get($key);
-        } else {
-            $http_request = $this->client->get($url);
-            $http_response_code = $http_request->getStatusCode();
+            return $this->cache->get($key);
+        }
 
-            if(!in_array($http_response_code, $this->acceptable_http_codes)) {
-                // sometimes the NWS API likes to include URLs that are not actually valid, so those throw 404s
-                // this accounts for those
-                return false;
-            }
+        // request a fresh copy of the data from the API endpoint, and store the data in the cache
+        $http_request = $this->client->get($url);
+        $http_response_code = $http_request->getStatusCode();
 
-            $data = json_decode($http_request->getBody()->getContents());
+        if(!in_array($http_response_code, $this->acceptable_http_codes)) {
+            // sometimes the NWS API likes to include URLs that are not actually valid, so those throw 404s
+            // this accounts for those
+            return false;
+        }
 
-            // if the URL is not in our cache exclusion array, we should cache it
-            if(!stripos_array($url, $this->cache_exclusions)) {
-                $this->cache->set($key, $data, $this->cache_lifetime);
-            }
+        $data = json_decode($http_request->getBody()->getContents());
+
+        // if the URL is not in our cache exclusion array, we should cache it
+        if(!stripos_array($url, $this->cache_exclusions)) {
+            $this->cache->set($key, $data, $this->cache_lifetime);
         }
 
         return $data;

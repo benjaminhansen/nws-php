@@ -143,7 +143,7 @@ class Api
 
     public function status(): string
     {
-        return $this->get($this->base_url)->status;
+        return trim($this->get($this->base_url)->status);
     }
 
     public function ok(): bool
@@ -159,11 +159,13 @@ class Api
         }
 
         if($observation_station) {
+            $observation_station = strtoupper($observation_station);
             $url = "{$this->base_url}/stations/{$observation_station}";
             return new ObservationStation($this->get($url), $this);
         }
 
         if($forecast_office) {
+            $forecast_office = strtoupper($forecast_office);
             $url = "{$this->base_url}/offices/{$forecast_office}";
             return new ForecastOffice($this->get($url), $this);
         }

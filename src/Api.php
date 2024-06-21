@@ -81,9 +81,9 @@ class Api
     {
         if($this->cache->clear()) {
             return $this;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function setTimezone(string $timezone): self

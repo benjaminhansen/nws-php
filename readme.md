@@ -42,6 +42,13 @@ $api->useCache();
 
 
 /*
+** You can make sure that the API's status returns OK before allowing any
+** requests to be made. An exception will be thrown if the API status is not OK.
+*/
+$api->ensureApiIsOk();
+
+
+/*
 **  We can set a timezone for the entire API callstack.
 **  All datetime objects will be converted to this timestamp.
 */

@@ -1,18 +1,5 @@
 <?php
 
-function env($key, $default = null) {
-    $env = isset($_ENV[$key]) ? $_ENV[$key] : $default;
-
-    $env = match($env) {
-        'true' => true,
-        'false' => false,
-        'null' => null,
-        default => $env
-    };
-
-    return $env;
-}
-
 function stripos_array($haystack, $needles) {
     foreach($needles as $needle) {
         if(($res = stripos($haystack, $needle)) !== false) {

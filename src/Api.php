@@ -8,6 +8,7 @@ use NWS\Features\Point;
 use NWS\Features\ForecastOffice;
 use NWS\Features\ObservationStation;
 use NWS\Exceptions\InvalidRequestException;
+use NWS\Exceptions\ApiNotOkException;
 use DateTimeZone;
 
 class Api
@@ -114,7 +115,7 @@ class Api
         }
 
         // key-ify the request URL to use as the unique ID in our cache
-        $key = urlencode($url);
+        $key = str_slug($url);
 
         // if there is a value in the cache for the given URL, return the cached data
         if($this->cache->has($key)) {
@@ -149,6 +150,16 @@ class Api
     public function ok(): bool
     {
         return strtolower($this->status()) == "ok";
+    }
+
+    public function ensureApiIsOk(): self
+    {
+        if(!$this->ok()) {
+            $status = $this->status();
+            throw new ApiNotOkException("NWS API is not OK: {$status}");
+        }
+
+        return $this;
     }
 
     public function getLocation(float $lat = null, float $lon = null, string $observation_station = null, string $forecast_office = null): Point|ObservationStation|ForecastOffice

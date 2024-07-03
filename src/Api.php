@@ -9,6 +9,7 @@ use NWS\Features\ForecastOffice;
 use NWS\Features\ObservationStation;
 use NWS\Exceptions\InvalidRequestException;
 use NWS\Exceptions\ApiNotOkException;
+use NWS\Exceptions\CacheException;
 use DateTimeZone;
 
 class Api
@@ -26,15 +27,26 @@ class Api
     public function __construct(string $domain, string $email)
     {
         // derive our user agent for the API requests
-        $this->user_agent = "($domain, $email)";
+        $this->setUserAgent($domain, $email);
 
         // build up our HTTP client for making requests to the API
         $this->client = new HttpClient([
             'http_errors' => false,
             'headers' => [
-                'User-Agent' => $this->user_agent
+                'User-Agent' => $this->getUserAgent()
             ]
         ]);
+    }
+
+    public function getUserAgent(): string
+    {
+        return $this->user_agent;
+    }
+
+    public function setUserAgent(string $domain, string $email): self
+    {
+        $this->user_agent = "({$domain}, {$email})";
+        return $this;
     }
 
     public function getCacheLifetime(): int
@@ -78,13 +90,13 @@ class Api
         return $this;
     }
 
-    public function clearCache(): bool|self
+    public function clearCache(): self
     {
         if($this->cache->clear()) {
             return $this;
         }
 
-        return false;
+        throw new CacheException("Failed to clear the cache!");
     }
 
     public function setTimezone(string $timezone): self
@@ -101,6 +113,7 @@ class Api
     public function get($url): object|bool
     {
         // the user did not opt to use the cache
+        // so make a direct request to the URL
         if(!$this->cache) {
             $http_request = $this->client->get($url);
             $http_response_code = $http_request->getStatusCode();

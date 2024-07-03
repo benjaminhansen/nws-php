@@ -11,6 +11,7 @@ use NWS\Enums\AlertStatus;
 use NWS\Enums\AlertMessageType;
 use NWS\Traits\IsCallable;
 use NWS\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class Alert
 {
@@ -118,6 +119,24 @@ class Alert
     public function instruction(): string
     {
         return $this->properties_instruction();
+    }
+
+    public function affectedZones(): Collection
+    {
+        $return = [];
+
+        $zones = $this->properties_affectedZones();
+        foreach($zones as $zone_url) {
+            $return[] = new ForecastZone($this->api->get($zone_url), $this->api);
+        }
+
+        return collect($return);
+    }
+
+    public function affectedZone(int $i = 0): ForecastZone
+    {
+        $zone = $this->properties_affectedZones()[$i];
+        return new ForecastZone($this->api->get($zone), $this->api);
     }
 
     public function response(): AlertResponse

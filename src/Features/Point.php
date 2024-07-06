@@ -117,7 +117,7 @@ class Point
         return $this->properties_gridY();
     }
 
-    public function latestObservations($observation_station_index = 0): LatestObservations
+    public function latestObservations(int $observation_station_index = 0): LatestObservations
     {
         return $this->observationStations()->station($observation_station_index)->latestObservations();
     }

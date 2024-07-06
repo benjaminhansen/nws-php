@@ -1,4 +1,4 @@
-# PHP Library for the Nationanl Weather Service REST API
+# PHP Library for the National Weather Service REST API
 
 Provides an intuitive interface to use the NWS REST API in any PHP application.
 

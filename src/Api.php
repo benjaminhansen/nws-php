@@ -14,7 +14,7 @@ use DateTimeZone;
 
 class Api
 {
-    protected Psr16Adapter|null $cache = null;
+    private Psr16Adapter|null $cache = null;
     private string $base_url = "https://api.weather.gov";
     private string $user_agent;
     private HttpClient $client;
@@ -43,10 +43,9 @@ class Api
         return $this->user_agent;
     }
 
-    public function setUserAgent(string $domain, string $email): self
+    private function setUserAgent(string $domain, string $email): void
     {
         $this->user_agent = "({$domain}, {$email})";
-        return $this;
     }
 
     public function getCacheLifetime(): int

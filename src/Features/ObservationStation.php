@@ -1,9 +1,9 @@
 <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Traits\IsCallable;
 
 class ObservationStation
 {

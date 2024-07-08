@@ -14,7 +14,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "NWS\\": "src/"
+      "BenjaminHansen\\NWS\\": "src/"
     },
     "files": [
       "src/functions.php"

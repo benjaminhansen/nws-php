@@ -1,8 +1,8 @@
 <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
-use NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Traits\IsCallable;
 use Illuminate\Support\Collection;
 
 class ForecastOffice

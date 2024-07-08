@@ -1,6 +1,6 @@
 <?php
 
-namespace NWS\Traits;
+namespace BenjaminHansen\NWS\Traits;
 
 trait IsCallable
 {

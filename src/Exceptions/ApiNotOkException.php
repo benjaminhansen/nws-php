@@ -1,6 +1,6 @@
 <?php
 
-namespace NWS\Exceptions;
+namespace BenjaminHansen\NWS\Exceptions;
 
 use Exception;
 

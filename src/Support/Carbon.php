@@ -1,6 +1,6 @@
 <?php
 
-namespace NWS\Support;
+namespace BenjaminHansen\NWS\Support;
 
 use Carbon\Carbon as CarbonDist;
 

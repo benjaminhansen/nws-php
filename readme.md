@@ -22,7 +22,7 @@ Notes
 
 require 'vendor/autoload.php'; // if your app it not already including this
 
-use NWS\Api;
+use BenjaminHansen\NWS\Api;
 
 /*
 **  We must provide valid contact information so the National Weather Service

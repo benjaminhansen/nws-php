@@ -1,16 +1,16 @@
-<?php
+ <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
-use NWS\Enums\AlertResponse;
-use NWS\Enums\AlertUrgency;
-use NWS\Enums\AlertCertainty;
-use NWS\Enums\AlertSeverity;
-use NWS\Enums\AlertCategory;
-use NWS\Enums\AlertStatus;
-use NWS\Enums\AlertMessageType;
-use NWS\Traits\IsCallable;
-use NWS\Support\Carbon;
+use BenjaminHansen\NWS\Enums\AlertResponse;
+use BenjaminHansen\NWS\Enums\AlertUrgency;
+use BenjaminHansen\NWS\Enums\AlertCertainty;
+use BenjaminHansen\NWS\Enums\AlertSeverity;
+use BenjaminHansen\NWS\Enums\AlertCategory;
+use BenjaminHansen\NWS\Enums\AlertStatus;
+use BenjaminHansen\NWS\Enums\AlertMessageType;
+use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class Alert

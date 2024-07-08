@@ -1,8 +1,8 @@
 <?php
 
-namespace NWS\Support;
+namespace BenjaminHansen\NWS\Support;
 
-use NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Traits\IsCallable;
 
 class Coordinate
 {

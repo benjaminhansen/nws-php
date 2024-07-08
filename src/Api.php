@@ -4,12 +4,12 @@ namespace NWS;
 
 use Phpfastcache\Helper\Psr16Adapter;
 use GuzzleHttp\Client as HttpClient;
-use NWS\Features\Point;
-use NWS\Features\ForecastOffice;
-use NWS\Features\ObservationStation;
-use NWS\Exceptions\InvalidRequestException;
-use NWS\Exceptions\ApiNotOkException;
-use NWS\Exceptions\CacheException;
+use BenjaminHansen\NWS\Features\Point;
+use BenjaminHansen\NWS\Features\ForecastOffice;
+use BenjaminHansen\NWS\Features\ObservationStation;
+use BenjaminHansen\NWS\Exceptions\InvalidRequestException;
+use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
+use BenjaminHansen\NWS\Exceptions\CacheException;
 use DateTimeZone;
 
 class Api

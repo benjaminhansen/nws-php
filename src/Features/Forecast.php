@@ -1,10 +1,10 @@
 <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
-use NWS\Support\Helpers;
-use NWS\Traits\IsCallable;
-use NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\Helpers;
+use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Support\Carbon;
 
 class Forecast
 {

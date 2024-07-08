@@ -1,10 +1,10 @@
 <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use NWS\Traits\IsCallable;
-use NWS\Support\UsState;
+use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Support\UsState;
 
 class Point
 {

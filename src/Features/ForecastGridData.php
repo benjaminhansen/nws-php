@@ -1,10 +1,10 @@
 <?php
 
-namespace NWS\Features;
+namespace BenjaminHansen\NWS\Features;
 
-use NWS\Traits\IsCallable;
-use NWS\Support\Helpers;
-use NWS\Support\Carbon;
+use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Support\Helpers;
+use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class ForecastGridData

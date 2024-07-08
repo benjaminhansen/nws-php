@@ -1,8 +1,8 @@
 <?php
 
-namespace NWS\Enums;
+namespace BenjaminHansen\NWS\Enums;
 
-use NWS\Traits\CanGetDescription;
+use BenjaminHansen\NWS\Traits\CanGetDescription;
 
 enum AlertStatus: string
 {

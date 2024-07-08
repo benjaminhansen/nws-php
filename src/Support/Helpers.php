@@ -1,6 +1,6 @@
 <?php
 
-namespace NWS\Support;
+namespace BenjaminHansen\NWS\Support;
 
 class Helpers
 {

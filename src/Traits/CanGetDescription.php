@@ -1,14 +1,14 @@
 <?php
 
-namespace NWS\Traits;
+namespace BenjaminHansen\NWS\Traits;
 
-use NWS\Enums\AlertResponse;
-use NWS\Enums\AlertUrgency;
-use NWS\Enums\AlertCertainty;
-use NWS\Enums\AlertSeverity;
-use NWS\Enums\AlertCategory;
-use NWS\Enums\AlertStatus;
-use NWS\Enums\AlertMessageType;
+use BenjaminHansen\NWS\Enums\AlertResponse;
+use BenjaminHansen\NWS\Enums\AlertUrgency;
+use BenjaminHansen\NWS\Enums\AlertCertainty;
+use BenjaminHansen\NWS\Enums\AlertSeverity;
+use BenjaminHansen\NWS\Enums\AlertCategory;
+use BenjaminHansen\NWS\Enums\AlertStatus;
+use BenjaminHansen\NWS\Enums\AlertMessageType;
 
 trait CanGetDescription
 {

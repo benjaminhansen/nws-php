@@ -1,6 +1,6 @@
 <?php
 
-namespace NWS;
+namespace BenjaminHansen\NWS;
 
 use Phpfastcache\Helper\Psr16Adapter;
 use GuzzleHttp\Client as HttpClient;

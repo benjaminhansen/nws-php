@@ -26,7 +26,7 @@ class Api
 
     public function __construct(string $domain, string $email)
     {
-        // derive our user agent for the API requests
+        // set our user agent for the API requests
         $this->setUserAgent($domain, $email);
 
         // build up our HTTP client for making requests to the API
@@ -172,6 +172,21 @@ class Api
         }
 
         return $this;
+    }
+
+    public function point(float $lat, float $lon): Point
+    {
+        return $this->getLocation(lat: $lat, lon: $lon);
+    }
+
+    public function observationStation(string $observation_station): ObservationStation
+    {
+        return $this->getLocation(observation_station: $observation_station);
+    }
+
+    public function forecastOffice(string $forecast_office): ForecastOffice
+    {
+        return $this->getLocation(forecast_office: $forecast_office);
     }
 
     public function getLocation(float $lat = null, float $lon = null, string $observation_station = null, string $forecast_office = null): Point|ObservationStation|ForecastOffice

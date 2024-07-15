@@ -7,12 +7,13 @@ use GuzzleHttp\Client as HttpClient;
 use BenjaminHansen\NWS\Features\Point;
 use BenjaminHansen\NWS\Features\ForecastOffice;
 use BenjaminHansen\NWS\Features\ObservationStation;
-use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
-use BenjaminHansen\NWS\Exceptions\CacheException;
 use BenjaminHansen\NWS\Features\ObservationStations;
 use BenjaminHansen\NWS\Features\Glossary;
+use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
+use BenjaminHansen\NWS\Exceptions\CacheException;
 use BenjaminHansen\NWS\Support\Carbon;
 use DateInterval;
+use DateTime;
 use DateTimeZone;
 
 class Api
@@ -24,11 +25,14 @@ class Api
     private int|DateInterval $cache_lifetime = 3600;
     private array $cache_exclusions = ['/alerts'];
     private array $acceptable_http_codes = [200];
-    private string $timezone = 'UTC';
+    private DateTimeZone $timezone;
     private string $cache_driver = 'Files';
 
     public function __construct(string $domain, string $email)
     {
+        // default the api requests to a reasonable timezone
+        $this->timezone('UTC');
+
         // set our user agent for the API requests
         $this->userAgent($domain, $email);
 
@@ -73,11 +77,11 @@ class Api
 
     public function useCache(int $lifetime = null, string $driver = null): self
     {
-        if(!is_null($lifetime)) {
+        if($lifetime) {
             $this->cacheLifetime($lifetime);
         }
 
-        if(!is_null($driver)) {
+        if($driver) {
             $this->cacheDriver($driver);
         }
 
@@ -99,27 +103,32 @@ class Api
 
     public function clearCache(): self
     {
-        if($this->cache->clear()) {
+        if(($this->cache && $this->cache->clear()) || !$this->cache) {
             return $this;
         }
 
         throw new CacheException("Failed to clear the cache!");
     }
 
-    public function timezone(string $timezone = null): DateTimeZone|self
+    public function timezone(string|DateTimeZone $timezone = null): DateTimeZone|self
     {
         if($timezone) {
+            if(is_string($timezone)) {
+                // cast the timezone string to an object
+                $timezone = new DateTimeZone($timezone);
+            }
+
             $this->timezone = $timezone;
             return $this;
         } else {
-            return new DateTimeZone($this->timezone);
+            return $this->timezone;
         }
     }
 
     public function get($url): object|bool
     {
-        // the user did not opt to use the cache
-        // so make a direct request to the URL
+        // the user did not opt to use the cache, so make a direct request to the URL endpoint
+        // and bypass all the following cache-related code, returning early
         if(!$this->cache) {
             $http_request = $this->client->get($url);
             $http_response_code = $http_request->getStatusCode();
@@ -134,9 +143,11 @@ class Api
         }
 
         // key-ify the request URL to use as the unique ID in our cache
+        // thanks Laravel for the wonderful string helpers!!! :)
         $key = str_slug($url);
 
         // if there is a value in the cache for the given URL, return the cached data
+        // returning early and bypassing the remaining code
         if($this->cache->has($key)) {
             return $this->cache->get($key);
         }
@@ -153,11 +164,9 @@ class Api
 
         $data = json_decode($http_request->getBody()->getContents());
         $expires_timestamp = $http_request->getHeader('Expires')[0] ?? null;
-        if($expires_timestamp && $this->cacheLifetime() !== 3600) {
-            // we have the expiration header from the API request and a custom lifetime
-            // has not been configured so we can derive a more specific cache lifetime
-            // for our own caching layer
-
+        if($expires_timestamp) {
+            // we have the expiration header from the API request so we can derive
+            // a more specific cache lifetime for our own caching layer
             $expires = new Carbon($expires_timestamp);
             $expires->setTimezoneIfNot($this->timezone());
 

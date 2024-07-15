@@ -16,14 +16,19 @@ class Glossary extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->glossary as $glossary) {
-            $return[] = $glossary;
+        foreach($this->data->glossary as $entry) {
+            $return[] = $entry;
         }
 
         return collect($return);
     }
 
-    public function term(string $term): string|null
+    public function term(string $term): null|object
+    {
+        return $this->get()->where('term', $term)->first();
+    }
+
+    public function definition(string $term): string|null
     {
         return $this->get()->where('term', $term)->first()?->definition;
     }

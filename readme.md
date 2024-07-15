@@ -38,7 +38,7 @@ $api = new Api($app_domain, $app_contact);
 ** Sometimes, you may not want to use the cache at all, so this allows it to be toggled on/off.
 */
 $api->useCache();
-// $api->useCache(lifetime: 3600, driver: 'Files'); // override the default cache lifetime and/or driver, if necessary
+// $api->useCache(lifetime: 3600, driver: 'Files'); // override the default cache lifetime seconds and/or storage driver, if necessary
 
 
 /*
@@ -51,10 +51,24 @@ $api->assertOk();
 
 /*
 **  We can set a timezone for the entire API callstack.
-**  All datetime objects will be converted to this timestamp.
+**  All datetime objects will be converted to this timezone.
+**
+**  If you pass a string version of a timezone, the method will auto-convert it
+**  to a DateTimeZone object.
 */
 $timezone = "America/Chicago";
+// $timezone = new DateTimeZone("America/Chicago");
 $api->timezone($timezone);
+/*
+    var_dump($api->timezone())
+
+    object(DateTimeZone)#18 (2) {
+        ["timezone_type"]=>
+        int(3)
+        ["timezone"]=>
+        string(15) "America/Chicago"
+    }
+*/
 
 
 /*
@@ -63,7 +77,7 @@ $api->timezone($timezone);
 */
 $lat = 32.7767;
 $lon = -96.7970;
-$location = $api->point(lat: $lat, lon: $lon);
+$location = $api->point($lat, $lon);
 
 
 /*

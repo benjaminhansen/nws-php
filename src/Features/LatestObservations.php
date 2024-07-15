@@ -5,6 +5,7 @@ namespace BenjaminHansen\NWS\Features;
 use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Helpers;
 use BenjaminHansen\NWS\Support\Carbon;
+use DateInterval;
 
 class LatestObservations extends BaseFeature
 {
@@ -40,8 +41,10 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_temperature()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}°{$unit}";
         }
 
         return $value;
@@ -54,8 +57,10 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_dewpoint()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}°{$unit}";
         }
 
         return $value;
@@ -78,8 +83,10 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_windSpeed()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}{$unit}";
         }
 
         return $value;
@@ -92,8 +99,10 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_windGust()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}{$unit}";
         }
 
         return $value;
@@ -107,14 +116,16 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_barometricPressure()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}{$unit}";
         }
 
         return $value;
     }
 
-    public function seaLevelPressure(string $unit = "IN", int $decimal_points = 0, bool $show_unit = false): int|float|string
+    public function seaLevelPressure(string $unit = "IN", int $decimal_points = 2, bool $show_unit = false): int|float|string
     {
         $value = match($unit) {
             "mb", "MB" => round(Helpers::pascals_to_millibars($this->properties_seaLevelPressure()->value), $decimal_points),
@@ -122,8 +133,10 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_seaLevelPressure()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}{$unit}";
         }
 
         return $value;
@@ -137,43 +150,79 @@ class LatestObservations extends BaseFeature
             default => round($this->properties_visibility()->value, $decimal_points)
         };
 
+        $value = number_format($value, $decimal_points);
+
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}{$unit}";
         }
 
         return $value;
     }
 
-    public function relativeHumidity(int $decimal_points = 0): int|float
+    public function relativeHumidity(int $decimal_points = 0, bool $show_unit = false, string $unit = "%"): int|float|string
     {
-        return round($this->properties_relativeHumidity()->value, $decimal_points);
+        $value = round($this->properties_relativeHumidity()->value, $decimal_points);
+
+        if($show_unit) {
+            $value = "{$value}{$unit}";
+        }
+
+        return $value;
     }
 
-    public function windChill(string $unit = "F", int $decimal_points = 0, bool $show_unit = false): int|float|string
+    public function windChill(string $unit = "F", int $decimal_points = 0, bool $show_unit = false): int|float|string|null
     {
+        if(!$this->properties_windChill()->value) {
+            return null;
+        }
+
         $value = match($unit) {
             "f", "F" => round(Helpers::celcius_to_fahrenheit($this->properties_windChill()->value), $decimal_points),
             default => round($this->properties_windChill()->value, $decimal_points)
         };
 
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}°{$unit}";
         }
 
         return $value;
     }
 
-    public function heatIndex(string $unit = "F", int $decimal_points = 0, bool $show_unit = false): int|float|string
+    public function heatIndex(string $unit = "F", int $decimal_points = 0, bool $show_unit = false): int|float|string|null
     {
+        if(!$this->properties_heatIndex()->value) {
+            return null;
+        }
+
         $value = match($unit) {
             "f", "F" => round(Helpers::celcius_to_fahrenheit($this->properties_heatIndex()->value), $decimal_points),
             default => round($this->properties_heatIndex()->value, $decimal_points)
         };
 
         if($show_unit) {
-            $value = "{$value} {$unit}";
+            $value = "{$value}°{$unit}";
         }
 
         return $value;
+    }
+
+    public function toObject(bool $show_units = true, string $temperature_unit = "F", string $speed_unit = "mph", string $distance_unit = "mi", string $pressure_unit = "in", string $datetime_format = "Y-m-d G:i:s"): object
+    {
+        return (object)[
+            'conditions' => $this->conditions(),
+            'created_at' => $this->timestamp()->format($datetime_format),
+            'temperature' => $this->temperature(show_unit: $show_units, unit: $temperature_unit),
+            'dewpoint' => $this->dewpoint(show_unit: $show_units, unit: $temperature_unit),
+            'windDirectionDegrees' => $this->windDirectionDegrees(),
+            'windDirectionCardinal' => $this->windDirectionCardinal(),
+            'windSpeed' => $this->windSpeed(show_unit: $show_units, unit: $speed_unit),
+            'windGust' => $this->windGust(show_unit: $show_units, unit: $speed_unit),
+            'barometricPressure' => $this->barometricPressure(show_unit: $show_units, unit: $pressure_unit),
+            'seaLevelPressure' => $this->seaLevelPressure(show_unit: $show_units, unit: $pressure_unit),
+            'visibility' => $this->visibility(show_unit: $show_units, unit: $distance_unit),
+            'relativeHumidity' => $this->relativeHumidity(show_unit: $show_units),
+            'windChill' => $this->windChill(show_unit: $show_units, unit: $temperature_unit),
+            'heatIndex' => $this->heatIndex(show_unit: $show_units, unit: $temperature_unit),
+        ];
     }
 }

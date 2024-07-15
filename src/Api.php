@@ -164,7 +164,7 @@ class Api
             $now = new Carbon();
             $now->setTimezoneIfNot($this->timezone());
 
-            $diff_interval = $expires->diff($now)->toDateInterval();
+            $diff_interval = $now->diff($expires)->toDateInterval();
             $this->cacheLifetime($diff_interval);
         }
 

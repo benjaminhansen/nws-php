@@ -2,6 +2,9 @@
 
 Provides an intuitive interface to use the NWS REST API (https://api.weather.gov) in any PHP application.
 
+Pairs well with my ArcGIS Geocode API wrapper as well.
+https://github.com/benjaminhansen/arcgis-geocode
+
 ## NWS Documentation
 https://www.weather.gov/documentation/services-web-api
 

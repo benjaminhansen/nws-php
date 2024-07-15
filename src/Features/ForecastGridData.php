@@ -2,22 +2,16 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Helpers;
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class ForecastGridData
+class ForecastGridData extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function id(): string
@@ -27,35 +21,35 @@ class ForecastGridData
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->properties->updateTime))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_updateTime()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function validTimes(): string
     {
-        return $this->data->properties->validTimes;
+        return $this->properties_validTimes();
     }
 
     public function gridId(): string
     {
-        return $this->data->properties->gridId;
+        return $this->properties_gridId();
     }
 
     public function gridX(): int
     {
-        return $this->data->properties->gridX;
+        return $this->properties_gridX();
     }
 
     public function gridY(): int
     {
-        return $this->data->properties->gridY;
+        return $this->properties_gridY();
     }
 
     public function temeratures(string $unit = 'f', int $decimal_points = 0): Collection
     {
         $return = [];
 
-        foreach($this->data->properties->temperature->values as $temperature) {
-            $validTime = (new Carbon(explode("/", $temperature->validTime)[0]))->setTimezoneIfNot($this->api->getTimezone());
+        foreach($this->properties_temperature()->values as $temperature) {
+            $validTime = (new Carbon(explode("/", $temperature->validTime)[0]))->setTimezoneIfNot($this->api->timezone());
             $value = match($unit) {
                 'f' => round(Helpers::celcius_to_fahrenheit($temperature->value), $decimal_points),
                 default => round($temperature->value, $decimal_points)

@@ -2,47 +2,41 @@
 
 namespace BenjaminHansen\NWS\Features;
 
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Coordinate;
-use BenjaminHansen\NWS\Traits\IsCallable;
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class ForecastHourly
+class ForecastHourly extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->properties->updated))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function createdAt(): Carbon
     {
-        return (new Carbon($this->data->properties->generatedAt))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function elevation()
     {
-        return $this->data->properties->elevation->value;
+        return $this->properties_elevation()->value;
     }
 
     public function periods(): ForecastPeriods
     {
-        return new ForecastPeriods($this->data->properties->periods, $this->api);
+        return new ForecastPeriods($this->properties_periods(), $this->api);
     }
 
     public function period($i): ForecastPeriod
     {
-        return (new ForecastPeriods($this->data->properties->periods, $this->api))->period($i);
+        return (new ForecastPeriods($this->properties_periods(), $this->api))->period($i);
     }
 
     public function coordinates(): Collection

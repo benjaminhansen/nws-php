@@ -2,28 +2,12 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 
-class RadarStation
+class RadarStation extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
-    }
-
-    public function type()
-    {
-        return $this->data->properties->stationType;
-    }
-
-    public function name()
-    {
-        return $this->data->properties->name;
+        parent::__construct($data, $api);
     }
 }

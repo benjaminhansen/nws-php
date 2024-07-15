@@ -2,23 +2,22 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use Illuminate\Support\Collection;
 
-class ObservationStations
+class ObservationStations extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
-    public function get(): Collection
+    public function count(): int
+    {
+        return count($this->data->features);
+    }
+
+    public function get(int $i = null): Collection|ObservationStation
     {
         $return = [];
 
@@ -26,11 +25,16 @@ class ObservationStations
             $return[] = new ObservationStation($station, $this->api);
         }
 
-        return collect($return);
+        $collection = collect($return);
+        if(is_null($i)) {
+            return $collection;
+        }
+
+        return $collection->get($i);
     }
 
     public function station(int $i = 0): ObservationStation
     {
-        return new ObservationStation($this->data->features[$i], $this->api);
+        return $this->get($i);
     }
 }

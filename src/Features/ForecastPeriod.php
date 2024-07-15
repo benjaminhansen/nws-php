@@ -2,21 +2,15 @@
 
 namespace BenjaminHansen\NWS\Features;
 
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Helpers;
-use BenjaminHansen\NWS\Traits\IsCallable;
 use BenjaminHansen\NWS\Support\Carbon;
 
-class ForecastPeriod
+class ForecastPeriod extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function name(): string
@@ -26,12 +20,12 @@ class ForecastPeriod
 
     public function startTime(): Carbon
     {
-        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->data->startTime))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function endTime(): Carbon
     {
-        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->data->endTime))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function daytime(): bool

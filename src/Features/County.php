@@ -3,58 +3,51 @@
 namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\UsState;
+use Illuminate\Support\Collection;
 
-class County
+class County extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function id(): string
     {
-        return $this->data->properties->id;
+        return $this->properties_id();
     }
 
     public function name(): string
     {
-        return $this->data->properties->name;
+        return $this->properties_name();
     }
 
     public function state(): UsState
     {
-        return new UsState($this->data->properties->state);
+        return new UsState($this->properties_state());
     }
 
     public function timezone(int $i = 0): DateTimeZone
     {
-        return new DateTimeZone($this->data->properties->timeZone[$i]);
+        return new DateTimeZone($this->properties_timeZone()[$i]);
     }
 
-    public function timezones(): array
+    public function timezones(): Collection
     {
         $return = [];
 
-        foreach($this->data->properties->timeZone as $timezone) {
+        foreach($this->properties_timeZone() as $timezone) {
             $return[] = new DateTimeZone($timezone);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function activeAlerts(): Alerts
     {
-        $base_url = $this->api->getBaseUrl();
-        $zone_id = $this->data->properties->id;
-        $request_url = "{$base_url}/alerts/active/zone/{$zone_id}";
+        $request_url = "{$this->api->baseUrl()}/alerts/active/zone/{$this->id()}";
 
         return new Alerts($this->api->get($request_url), $this->api);
     }

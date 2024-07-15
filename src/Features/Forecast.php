@@ -2,39 +2,39 @@
 
 namespace BenjaminHansen\NWS\Features;
 
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Helpers;
-use BenjaminHansen\NWS\Traits\IsCallable;
 use BenjaminHansen\NWS\Support\Carbon;
 
-class Forecast
+class Forecast extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function createdAt(): Carbon
     {
-        return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->timezone());
     }
 
-    public function elevation(string $unit = "ft", int $decimal_places = 0): int|float
+    public function elevation(string $unit = "FT", int $decimal_places = 0, bool $show_unit = false): int|float|string
     {
-        return match($unit) {
-            "ft" => round(Helpers::meters_to_feet($this->properties_elevation()->value), $decimal_places),
+        $value = match($unit) {
+            "ft", "FT" => round(Helpers::meters_to_feet($this->properties_elevation()->value), $decimal_places),
             default => round($this->properties_elevation()->value, $decimal_places)
         };
+
+        if($show_unit) {
+            $value = "{$value} {$unit}";
+        }
+
+        return $value;
     }
 
     public function periods(): ForecastPeriods
@@ -44,6 +44,6 @@ class Forecast
 
     public function period(int $i = 0): ForecastPeriod
     {
-        return (new ForecastPeriods($this->properties_periods(), $this->api))->period($i);
+        return $this->periods()->period($i);
     }
 }

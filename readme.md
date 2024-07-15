@@ -38,14 +38,15 @@ $api = new Api($app_domain, $app_contact);
 ** Sometimes, you may not want to use the cache at all, so this allows it to be toggled on/off.
 */
 $api->useCache();
-// $api->setCacheLifetime(3600); // seconds that the cached data should persist
+// $api->useCache(lifetime: 3600, driver: 'Files'); // override the default cache lifetime and/or driver, if necessary
 
 
 /*
 ** You can make sure that the API's status returns OK before allowing any
 ** requests to be made. An exception will be thrown if the API status is not OK.
 */
-$api->ensureApiIsOk();
+$api->assertOk();
+// $api->assertOk(message: 'custom exception message can be placed here');
 
 
 /*
@@ -53,7 +54,7 @@ $api->ensureApiIsOk();
 **  All datetime objects will be converted to this timestamp.
 */
 $timezone = "America/Chicago";
-$api->setTimezone($timezone);
+$api->timezone($timezone);
 
 
 /*
@@ -62,7 +63,7 @@ $api->setTimezone($timezone);
 */
 $lat = 32.7767;
 $lon = -96.7970;
-$location = $api->getLocation(lat: $lat, lon: $lon);
+$location = $api->point(lat: $lat, lon: $lon);
 
 
 /*
@@ -101,7 +102,7 @@ $observations = $location->latestObservations();
 $raw_data = $observations->raw();
 var_dump($raw_data);
 
-echo $observations->temperature();
+echo $observations->temperature(show_units: true);
 echo $observations->dewpoint();
 // other methods are available for the other data points as well
 
@@ -127,7 +128,7 @@ var_dump($hourly_forecast->periods()->get());
 ** Little Rock, Arkansas for example
 */
 $office_id = "LZK";
-$forecast_office = $api->getLocation(forecast_office: $office_id);
+$forecast_office = $api->forecastOffice($office_id);
 echo $forecast_office->name();
 echo $forecast_office->phone();
 echo $forecast_office->email();
@@ -144,7 +145,7 @@ var_dump($forecast_office->activeAlerts()->get());
 ** Little Rock, Arkansas Airport KLIT for example
 */
 $station_id = "KLIT";
-$observation_station = $api->getLocation(observation_station: $station_id);
+$observation_station = $api->observationStation($station_id);
 echo $observation_station->name();
 echo $observation_station->id();
 var_dump($observation_station->timezone());
@@ -152,8 +153,3 @@ var_dump($observation_station->county());
 var_dump($observation_station->latestObservations());
 var_dump($observation_station->activeAlerts()->get());
 ```
-
-## Packages Used
-* <code>guzzlehttp/guzzle</code> for all HTTP requests
-* <code>nesbot/carbon</code> for date/time parsing and formatting
-* <code>phpfastcache/phpfastcache</code> for local caching of API data to reduce direct calls to the API endpoint

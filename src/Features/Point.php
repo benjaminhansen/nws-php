@@ -3,20 +3,14 @@
 namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\UsState;
 
-class Point
+class Point extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function city()
@@ -87,14 +81,15 @@ class Point
     public function radarStation(): RadarStation
     {
         $id = $this->radarStationId();
-        $base_url = $this->api->getBaseUrl();
+        $base_url = $this->api->baseUrl();
         $url = "{$base_url}/radar/stations/{$id}";
+
         return new RadarStation($this->api->get($url), $this->api);
     }
 
     public function fireZone(): FireZone
     {
-        return new FireZone($this->api->get($this->data->properties->fireWeatherZone), $this->api);
+        return new FireZone($this->api->get($this->properties_fireWeatherZone()), $this->api);
     }
 
     public function timezone(): DateTimeZone
@@ -124,7 +119,7 @@ class Point
 
     public function activeAlerts(): Alerts
     {
-        $base_url = $this->api->getBaseUrl();
+        $base_url = $this->api->baseUrl();
         $lat = $this->latitude();
         $lon = $this->longitude();
         $request_url = "{$base_url}/alerts/active?point={$lat},{$lon}";

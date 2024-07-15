@@ -5,31 +5,26 @@ namespace BenjaminHansen\NWS\Features;
 use BenjaminHansen\NWS\Api;
 use Illuminate\Support\Collection;
 
-class ForecastPeriods extends BaseFeature
+class Glossary extends BaseFeature
 {
     public function __construct(object $data, Api $api)
     {
         parent::__construct($data, $api);
     }
 
-    public function count(): int
-    {
-        return count($this->data);
-    }
-
     public function get(): Collection
     {
         $return = [];
 
-        foreach($this->data as $period) {
-            $return[] = new ForecastPeriod($period, $this->api);
+        foreach($this->data->glossary as $glossary) {
+            $return[] = $glossary;
         }
 
         return collect($return);
     }
 
-    public function period(int $i): ForecastPeriod
+    public function term(string $term): string|null
     {
-        return new ForecastPeriod($this->data[$i], $this->api);
+        return $this->get()->where('term', $term)->first()?->definition;
     }
 }

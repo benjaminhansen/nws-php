@@ -2,21 +2,15 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class Alerts
+class Alerts extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function title(): string
@@ -26,12 +20,12 @@ class Alerts
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->data->updated))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->data->updated))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function hasAlerts(): bool
     {
-        return (boolean) $this->count();
+        return (bool) $this->count();
     }
 
     public function count(): int

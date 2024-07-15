@@ -7,9 +7,12 @@ use GuzzleHttp\Client as HttpClient;
 use BenjaminHansen\NWS\Features\Point;
 use BenjaminHansen\NWS\Features\ForecastOffice;
 use BenjaminHansen\NWS\Features\ObservationStation;
-use BenjaminHansen\NWS\Exceptions\InvalidRequestException;
 use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
 use BenjaminHansen\NWS\Exceptions\CacheException;
+use BenjaminHansen\NWS\Features\ObservationStations;
+use BenjaminHansen\NWS\Features\Glossary;
+use BenjaminHansen\NWS\Support\Carbon;
+use DateInterval;
 use DateTimeZone;
 
 class Api
@@ -18,7 +21,7 @@ class Api
     private string $base_url = "https://api.weather.gov";
     private string $user_agent;
     private HttpClient $client;
-    private int $cache_lifetime = 3600;
+    private int|DateInterval $cache_lifetime = 3600;
     private array $cache_exclusions = ['/alerts'];
     private array $acceptable_http_codes = [200];
     private string $timezone = 'UTC';
@@ -27,66 +30,71 @@ class Api
     public function __construct(string $domain, string $email)
     {
         // set our user agent for the API requests
-        $this->setUserAgent($domain, $email);
+        $this->userAgent($domain, $email);
 
         // build up our HTTP client for making requests to the API
         $this->client = new HttpClient([
             'http_errors' => false,
             'headers' => [
-                'User-Agent' => $this->getUserAgent()
+                'User-Agent' => $this->userAgent()
             ]
         ]);
     }
 
-    public function getUserAgent(): string
+    private function userAgent(string $domain = null, string $email = null): string|self
     {
-        return $this->user_agent;
+        if($domain && $email) {
+            $this->user_agent = "({$domain}, {$email})";
+            return $this;
+        } else {
+            return $this->user_agent;
+        }
     }
 
-    private function setUserAgent(string $domain, string $email): void
+    public function cacheLifetime(int|DateInterval $lifetime = null): string|self|DateInterval
     {
-        $this->user_agent = "({$domain}, {$email})";
+        if($lifetime) {
+            $this->cache_lifetime = $lifetime;
+            return $this;
+        } else {
+            return $this->cache_lifetime;
+        }
     }
 
-    public function getCacheLifetime(): int
+    public function cacheDriver(string $driver = null): string|self
     {
-        return $this->cache_lifetime;
+        if($driver) {
+            $this->cache_driver = $driver;
+            return $this;
+        } else {
+            return $this->cache_driver;
+        }
     }
 
-    public function setCacheLifetime(int $lifetime): self
+    public function useCache(int $lifetime = null, string $driver = null): self
     {
-        $this->cache_lifetime = $lifetime;
-        return $this;
-    }
+        if(!is_null($lifetime)) {
+            $this->cacheLifetime($lifetime);
+        }
 
-    public function getCacheDriver(): string
-    {
-        return $this->cache_driver;
-    }
+        if(!is_null($driver)) {
+            $this->cacheDriver($driver);
+        }
 
-    public function setCacheDriver(string $driver): self
-    {
-        $this->cache_driver = $driver;
-        return $this;
-    }
-
-    public function useCache(): self
-    {
         // build up our cache to store data locally for a period of time
-        $this->cache = new Psr16Adapter($this->getCacheDriver());
-        $this->cache_lifetime = $this->getCacheLifetime();
+        $this->cache = new Psr16Adapter($this->cacheDriver());
+        $this->cache_lifetime = $this->cacheLifetime();
         return $this;
     }
 
-    public function getBaseUrl(): string
+    public function baseUrl(string $base_url = null): string|self
     {
-        return $this->base_url;
-    }
-
-    public function setBaseUrl(string $base_url): self
-    {
-        $this->base_url = $base_url;
-        return $this;
+        if($base_url) {
+            $this->base_url = $base_url;
+            return $this;
+        } else {
+            return $this->base_url;
+        }
     }
 
     public function clearCache(): self
@@ -98,15 +106,14 @@ class Api
         throw new CacheException("Failed to clear the cache!");
     }
 
-    public function setTimezone(string $timezone): self
+    public function timezone(string $timezone = null): DateTimeZone|self
     {
-        $this->timezone = $timezone;
-        return $this;
-    }
-
-    public function getTimezone(): DateTimeZone
-    {
-        return new DateTimeZone($this->timezone);
+        if($timezone) {
+            $this->timezone = $timezone;
+            return $this;
+        } else {
+            return new DateTimeZone($this->timezone);
+        }
     }
 
     public function get($url): object|bool
@@ -145,6 +152,21 @@ class Api
         }
 
         $data = json_decode($http_request->getBody()->getContents());
+        $expires_timestamp = $http_request->getHeader('Expires')[0] ?? null;
+        if($expires_timestamp && $this->cacheLifetime() !== 3600) {
+            // we have the expiration header from the API request and a custom lifetime
+            // has not been configured so we can derive a more specific cache lifetime
+            // for our own caching layer
+
+            $expires = new Carbon($expires_timestamp);
+            $expires->setTimezoneIfNot($this->timezone());
+
+            $now = new Carbon();
+            $now->setTimezoneIfNot($this->timezone());
+
+            $diff_interval = $expires->diff($now)->toDateInterval();
+            $this->cacheLifetime($diff_interval);
+        }
 
         // if the URL is not in our cache exclusion array, we should cache it
         if(!stripos_array($url, $this->cache_exclusions)) {
@@ -161,12 +183,16 @@ class Api
 
     public function ok(): bool
     {
-        return strtolower($this->status()) == "ok";
+        return strtolower($this->status()) === "ok";
     }
 
-    public function ensureApiIsOk(): self
+    public function assertOk(string $message = null): self
     {
         if(!$this->ok()) {
+            if($message) {
+                throw new ApiNotOkException($message);
+            }
+
             $status = $this->status();
             throw new ApiNotOkException("NWS API is not OK: {$status}");
         }
@@ -176,38 +202,33 @@ class Api
 
     public function point(float $lat, float $lon): Point
     {
-        return $this->getLocation(lat: $lat, lon: $lon);
+        $url = "{$this->baseUrl()}/points/{$lat},{$lon}";
+        return new Point($this->get($url), $this);
     }
 
     public function observationStation(string $observation_station): ObservationStation
     {
-        return $this->getLocation(observation_station: $observation_station);
+        $observation_station = strtoupper($observation_station);
+        $url = "{$this->baseUrl()}/stations/{$observation_station}";
+        return new ObservationStation($this->get($url), $this);
+    }
+
+    public function observationStations(): ObservationStations
+    {
+        $url = "{$this->baseUrl()}/stations";
+        return new ObservationStations($this->get($url), $this);
     }
 
     public function forecastOffice(string $forecast_office): ForecastOffice
     {
-        return $this->getLocation(forecast_office: $forecast_office);
+        $forecast_office = strtoupper($forecast_office);
+        $url = "{$this->baseUrl()}/offices/{$forecast_office}";
+        return new ForecastOffice($this->get($url), $this);
     }
 
-    public function getLocation(float $lat = null, float $lon = null, string $observation_station = null, string $forecast_office = null): Point|ObservationStation|ForecastOffice
+    public function glossary(): Glossary
     {
-        if($lat && $lon) {
-            $url = "{$this->base_url}/points/{$lat},{$lon}";
-            return new Point($this->get($url), $this);
-        }
-
-        if($observation_station) {
-            $observation_station = strtoupper($observation_station);
-            $url = "{$this->base_url}/stations/{$observation_station}";
-            return new ObservationStation($this->get($url), $this);
-        }
-
-        if($forecast_office) {
-            $forecast_office = strtoupper($forecast_office);
-            $url = "{$this->base_url}/offices/{$forecast_office}";
-            return new ForecastOffice($this->get($url), $this);
-        }
-
-        throw new InvalidRequestException("Invalid API request!");
+        $url = "{$this->baseUrl()}/glossary";
+        return new Glossary($this->get($url), $this);
     }
 }

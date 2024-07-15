@@ -2,6 +2,7 @@
 
 namespace BenjaminHansen\NWS\Features;
 
+use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Enums\AlertResponse;
 use BenjaminHansen\NWS\Enums\AlertUrgency;
 use BenjaminHansen\NWS\Enums\AlertCertainty;
@@ -9,21 +10,14 @@ use BenjaminHansen\NWS\Enums\AlertSeverity;
 use BenjaminHansen\NWS\Enums\AlertCategory;
 use BenjaminHansen\NWS\Enums\AlertStatus;
 use BenjaminHansen\NWS\Enums\AlertMessageType;
-use BenjaminHansen\NWS\Traits\IsCallable;
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class Alert
+class Alert extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function id(): string
@@ -38,27 +32,27 @@ class Alert
 
     public function sentAt(): Carbon
     {
-        return (new Carbon($this->properties_sent()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_sent()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function effectiveAt(): Carbon
     {
-        return (new Carbon($this->properties_effective()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_effective()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function onsetAt(): Carbon
     {
-        return (new Carbon($this->properties_onset()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_onset()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function expiresAt(): Carbon
     {
-        return (new Carbon($this->properties_expires()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_expires()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function endsAt(): Carbon
     {
-        return (new Carbon($this->properties_ends()))->setTimezoneIfNot($this->api->getTimezone());
+        return (new Carbon($this->properties_ends()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function status(): AlertStatus

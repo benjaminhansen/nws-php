@@ -2,20 +2,14 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use Illuminate\Support\Collection;
 
-class ForecastOffice
+class ForecastOffice extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function id(): string

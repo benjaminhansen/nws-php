@@ -3,32 +3,26 @@
 namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 use Illuminate\Support\Collection;
 
-class ForecastZone
+class ForecastZone extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->data = $data;
-        $this->api = $api;
+        parent::__construct($data, $api);
     }
 
     public function timezone(int $i = 0): DateTimeZone
     {
-        return $this->timezones()[$i];
+        return $this->timezones()->get($i);
     }
 
     public function timezones(): Collection
     {
         $return = [];
 
-        foreach($this->data->properties->timeZone as $timezone) {
+        foreach($this->properties_timeZone() as $timezone) {
             $return[] = new DateTimeZone($timezone);
         }
 
@@ -37,40 +31,40 @@ class ForecastZone
 
     public function id(): string
     {
-        return $this->data->properties->id;
+        return $this->properties_id();
     }
 
     public function name(): string
     {
-        return $this->data->properties->name;
+        return $this->properties_name();
     }
 
     public function radarStation(): string
     {
-        return $this->data->properties->radarStation;
+        return $this->properties_radarStation();
     }
 
-    public function observationStations(): array
+    public function observationStations(): Collection
     {
         $return = [];
 
-        foreach($this->data->properties->observationStations as $station) {
+        foreach($this->properties_observationStations() as $station) {
             $return[] = new ObservationStation($this->api->get($station), $this->api);
         }
 
-        return $return;
+        return collect($return);
     }
 
     public function observationStation(int $i = 0): ObservationStation
     {
-        return $this->observationStations()[$i];
+        return $this->observationStations()->get($i);
     }
 
     public function forecastOffices(): Collection
     {
         $return = [];
 
-        foreach($this->data->properties->forecastOffices as $office) {
+        foreach($this->properties_forecastOffices() as $office) {
             $return[] = new ForecastOffice($this->api->get($office), $this->api);
         }
 
@@ -79,6 +73,6 @@ class ForecastZone
 
     public function forecastOffice(int $i = 0): ForecastOffice
     {
-        return $this->forecastOffices()[$i];
+        return $this->forecastOffices()->get($i);
     }
 }

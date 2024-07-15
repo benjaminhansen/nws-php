@@ -3,19 +3,13 @@
 namespace BenjaminHansen\NWS\Features;
 
 use DateTimeZone;
-use BenjaminHansen\NWS\Traits\IsCallable;
+use BenjaminHansen\NWS\Api;
 
-class ObservationStation
+class ObservationStation extends BaseFeature
 {
-    use IsCallable;
-
-    private $data;
-    private $api;
-
-    public function __construct($data, $api)
+    public function __construct(object $data, Api $api)
     {
-        $this->api = $api;
-        $this->data = $data;
+        parent::__construct($data, $api);
     }
 
     public function latitude()
@@ -37,27 +31,27 @@ class ObservationStation
 
     public function county(): County
     {
-        return new County($this->api->get($this->data->properties->county), $this->api);
+        return new County($this->api->get($this->properties_county()), $this->api);
     }
 
     public function name(): string
     {
-        return $this->data->properties->name;
+        return $this->properties_name();
     }
 
     public function id(): string
     {
-        return $this->data->properties->stationIdentifier;
+        return $this->properties_stationIdentifier();
     }
 
     public function timezone(): DateTimeZone
     {
-        return new DateTimeZone($this->data->properties->timeZone);
+        return new DateTimeZone($this->properties_timeZone());
     }
 
     public function activeAlerts(): Alerts
     {
-        $base_url = $this->api->getBaseUrl();
+        $base_url = $this->api->baseUrl();
         $lat = $this->latitude();
         $lon = $this->longitude();
         $request_url = "{$base_url}/alerts/active?point={$lat},{$lon}";

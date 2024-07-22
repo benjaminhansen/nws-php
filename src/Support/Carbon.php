@@ -11,6 +11,10 @@ class Carbon extends CarbonDist
         parent::__construct($time, $timezone);
     }
 
+    /*
+    ** If the current timezone is not equal to the one passed to this method,
+    ** then set the timezone to the provided value
+    */
     public function setTimezoneIfNot($timezone): self
     {
         if($this->getTimezone()->getName() !== $timezone->getName()) {

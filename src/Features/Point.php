@@ -13,27 +13,27 @@ class Point extends BaseFeature
         parent::__construct($data, $api);
     }
 
-    public function city()
+    public function city(): string
     {
         return $this->properties_relativeLocation_properties_city();
     }
 
-    public function state()
+    public function state(): UsState
     {
         return new UsState($this->properties_relativeLocation_properties_state());
     }
 
-    public function cwa()
+    public function cwa(): string
     {
-        $this->properties_cwa();
+        return $this->properties_cwa();
     }
 
-    public function latitude()
+    public function latitude(): string|int|float
     {
         return $this->geometry_coordinates()[1];
     }
 
-    public function longitude()
+    public function longitude(): string|int|float
     {
         return $this->geometry_coordinates()[0];
     }

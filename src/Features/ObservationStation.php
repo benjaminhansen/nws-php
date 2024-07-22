@@ -12,12 +12,12 @@ class ObservationStation extends BaseFeature
         parent::__construct($data, $api);
     }
 
-    public function latitude()
+    public function latitude(): string|int|float
     {
         return $this->geometry_coordinates()[1];
     }
 
-    public function longitude()
+    public function longitude(): string|int|float
     {
         return $this->geometry_coordinates()[0];
     }

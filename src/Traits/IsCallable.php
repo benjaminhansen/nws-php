@@ -4,7 +4,7 @@ namespace BenjaminHansen\NWS\Traits;
 
 trait IsCallable
 {
-    public function raw()
+    public function raw(): object
     {
         return $this->data;
     }

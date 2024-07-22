@@ -9,8 +9,8 @@ class BaseFeature
 {
     use IsCallable;
 
-    public $data;
-    public $api;
+    public object $data;
+    public Api $api;
 
     public function __construct(object $data, Api $api)
     {

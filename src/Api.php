@@ -13,7 +13,6 @@ use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
 use BenjaminHansen\NWS\Exceptions\CacheException;
 use BenjaminHansen\NWS\Support\Carbon;
 use DateInterval;
-use DateTime;
 use DateTimeZone;
 
 class Api
@@ -28,10 +27,15 @@ class Api
     private DateTimeZone $timezone;
     private string $cache_driver = 'Files';
 
-    public function __construct(string $domain, string $email)
+    public function __construct(string $domain, string $email, string|DateTimeZone $timezone = null)
     {
-        // default the api requests to a reasonable timezone
-        $this->timezone('UTC');
+        if($timezone) {
+            // set the timezone that was passed into the constructor
+            $this->timezone($timezone);
+        } else {
+            // default the api requests to a reasonable timezone
+            $this->timezone('UTC');
+        }
 
         // set our user agent for the API requests
         $this->userAgent($domain, $email);
@@ -45,6 +49,9 @@ class Api
         ]);
     }
 
+    /*
+    **  get/set the user_agent for the API http client
+    */
     private function userAgent(string $domain = null, string $email = null): string|self
     {
         if($domain && $email) {
@@ -55,6 +62,9 @@ class Api
         }
     }
 
+    /*
+    **  get/set the cache_lifetime used for the API's caching layer, if you opted for it.
+    */
     public function cacheLifetime(int|DateInterval $lifetime = null): string|self|DateInterval
     {
         if($lifetime) {
@@ -65,6 +75,9 @@ class Api
         }
     }
 
+    /*
+    **  get/set the cache_driver used for the caching layer, if you opted for it.
+    */
     public function cacheDriver(string $driver = null): string|self
     {
         if($driver) {
@@ -75,6 +88,9 @@ class Api
         }
     }
 
+    /*
+    **  Opt-in for using the caching layer. This is STRONGLY recommended!
+    */
     public function useCache(int $lifetime = null, string $driver = null): self
     {
         if($lifetime) {
@@ -91,6 +107,9 @@ class Api
         return $this;
     }
 
+    /*
+    **  get/set the base_url for all API requests made the NWS
+    */
     public function baseUrl(string $base_url = null): string|self
     {
         if($base_url) {
@@ -101,6 +120,9 @@ class Api
         }
     }
 
+    /*
+    **  Clear the local cache
+    */
     public function clearCache(): self
     {
         if(($this->cache && $this->cache->clear()) || !$this->cache) {
@@ -110,6 +132,9 @@ class Api
         throw new CacheException("Failed to clear the cache!");
     }
 
+    /*
+    **  get/set the timezone used to cast all datetime values returned from the API
+    */
     public function timezone(string|DateTimeZone $timezone = null): DateTimeZone|self
     {
         if($timezone) {
@@ -125,7 +150,12 @@ class Api
         }
     }
 
-    public function get($url): object|bool
+    /*
+    **  The main meat and potatoes of this project. Each request URL must pass through this method and the results
+    **  are either returned from the local cache or are retrieved from the NWS API endpoint to be returned directly
+    **  or stashed in the cache first and then returned to the user.
+    */
+    public function get(string $url): object|bool
     {
         // the user did not opt to use the cache, so make a direct request to the URL endpoint
         // and bypass all the following cache-related code, returning early
@@ -179,22 +209,31 @@ class Api
 
         // if the URL is not in our cache exclusion array, we should cache it
         if(!stripos_array($url, $this->cache_exclusions)) {
-            $this->cache->set($key, $data, $this->cache_lifetime);
+            $this->cache->set($key, $data, $this->cacheLifetime());
         }
 
         return $data;
     }
 
+    /*
+    **  Return the status of the NWS API endpoint
+    */
     public function status(): string
     {
         return trim($this->get($this->base_url)->status);
     }
 
+    /*
+    **  Check if the API status is OK and return a boolean
+    */
     public function ok(): bool
     {
         return strtolower($this->status()) === "ok";
     }
 
+    /*
+    **  Make sure that the API status is OK, otherwise bail out
+    */
     public function assertOk(string $message = null): self
     {
         if(!$this->ok()) {
@@ -209,12 +248,18 @@ class Api
         return $this;
     }
 
+    /*
+    **  Get a specific lat/lon point and its corresponding weather data
+    */
     public function point(float $lat, float $lon): Point
     {
         $url = "{$this->baseUrl()}/points/{$lat},{$lon}";
         return new Point($this->get($url), $this);
     }
 
+    /*
+    **  Get a specific observation station and its corresponding weather data
+    */
     public function observationStation(string $observation_station): ObservationStation
     {
         $observation_station = strtoupper($observation_station);
@@ -222,12 +267,18 @@ class Api
         return new ObservationStation($this->get($url), $this);
     }
 
+    /*
+    **  Get ALL observation stations and their corresponding weather data
+    */
     public function observationStations(): ObservationStations
     {
         $url = "{$this->baseUrl()}/stations";
         return new ObservationStations($this->get($url), $this);
     }
 
+    /*
+    **  Get a specific Weather Forecast Office and its pertinent information
+    */
     public function forecastOffice(string $forecast_office): ForecastOffice
     {
         $forecast_office = strtoupper($forecast_office);
@@ -235,6 +286,9 @@ class Api
         return new ForecastOffice($this->get($url), $this);
     }
 
+    /*
+    **  Get the NWS API's glossary for term lookups, etc.
+    */
     public function glossary(): Glossary
     {
         $url = "{$this->baseUrl()}/glossary";

@@ -5,7 +5,6 @@ namespace BenjaminHansen\NWS\Features;
 use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\Helpers;
 use BenjaminHansen\NWS\Support\Carbon;
-use DateInterval;
 
 class LatestObservations extends BaseFeature
 {

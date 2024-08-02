@@ -28,7 +28,7 @@ class Glossary extends BaseFeature
         return $this->get()->where('term', $term)->first();
     }
 
-    public function definition(string $term): string|null
+    public function define(string $term): string|null
     {
         return $this->get()->where('term', $term)->first()?->definition;
     }

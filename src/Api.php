@@ -9,9 +9,11 @@ use BenjaminHansen\NWS\Features\ForecastOffice;
 use BenjaminHansen\NWS\Features\ObservationStation;
 use BenjaminHansen\NWS\Features\ObservationStations;
 use BenjaminHansen\NWS\Features\Glossary;
+use BenjaminHansen\NWS\Features\ForecastZone;
 use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
 use BenjaminHansen\NWS\Exceptions\CacheException;
 use BenjaminHansen\NWS\Support\Carbon;
+use Illuminate\Support\Collection;
 use DateInterval;
 use DateTimeZone;
 
@@ -293,5 +295,25 @@ class Api
     {
         $url = "{$this->baseUrl()}/glossary";
         return new Glossary($this->get($url), $this);
+    }
+
+    /*
+    ** Get a specific Forecast Zone
+    */
+    public function zone(string $zone_id): ForecastZone
+    {
+        $zone_id = strtoupper($zone_id);
+        $url = "{$this->baseUrl()}/zones?id={$zone_id}";
+        $data = $this->get($url)->features[0];
+        return new ForecastZone($data, $this);
+    }
+
+    /*
+    ** Get all available Forecast Zones
+    */
+    public function zones(): Collection
+    {
+        $url = "{$this->baseUrl()}/zones";
+        return collect($this->get($url)->features);
     }
 }

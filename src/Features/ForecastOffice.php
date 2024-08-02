@@ -37,7 +37,7 @@ class ForecastOffice extends BaseFeature
         return $this->data->email;
     }
 
-    public function address(): string
+    public function address(): object
     {
         return $this->data->address;
     }

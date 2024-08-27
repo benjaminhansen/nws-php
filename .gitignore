@@ -2,4 +2,4 @@ composer.lock
 vendor/
 cache/
 .DS_Store
-tests/example.php
+tests/

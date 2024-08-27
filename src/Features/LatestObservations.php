@@ -205,6 +205,18 @@ class LatestObservations extends BaseFeature
         return $value;
     }
 
+    public function windDescription(bool $show_unit = false): string
+    {
+        if($this->windSpeed() == 0) {
+            return 'Calm';
+        }
+
+        $cardinal = $this->windDirectionCardinal();
+        $speed = $this->windSpeed(show_unit: $show_unit);
+
+        return "{$cardinal} {$speed}";
+    }
+
     public function toObject(bool $show_units = true, string $temperature_unit = "F", string $speed_unit = "mph", string $distance_unit = "mi", string $pressure_unit = "in", string $datetime_format = "Y-m-d G:i:s"): object
     {
         return (object)[

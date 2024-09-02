@@ -30,6 +30,6 @@ class ForecastPeriods extends BaseFeature
 
     public function period(int $i): ForecastPeriod
     {
-        return new ForecastPeriod($this->data[$i], $this->api);
+        return new ForecastPeriod($this->data->$i, $this->api);
     }
 }

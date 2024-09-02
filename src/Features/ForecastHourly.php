@@ -31,12 +31,12 @@ class ForecastHourly extends BaseFeature
 
     public function periods(): ForecastPeriods
     {
-        return new ForecastPeriods($this->properties_periods(), $this->api);
+        return new ForecastPeriods((object) $this->properties_periods(), $this->api);
     }
 
     public function period($i): ForecastPeriod
     {
-        return (new ForecastPeriods($this->properties_periods(), $this->api))->period($i);
+        return (new ForecastPeriods((object) $this->properties_periods(), $this->api))->period($i);
     }
 
     public function coordinates(): Collection

@@ -89,27 +89,27 @@ $location = $api->point($lat, $lon);
 /*
 **  Get the location's county information
 */
-$county = $location->county();
-echo $county->name();
-echo $county->id();
-echo $county->state()->name();
-echo $county->state()->abbreviation();
-var_dump($county->timezone());
-var_dump($county->timezones());
+$county = $location->county;
+echo $county->name;
+echo $county->id;
+echo $county->state->name;
+echo $county->state->abbreviation;
+var_dump($county->timezone);
+var_dump($county->timezones);
 
 
 /*
 ** Get information about the location
 */
-echo $location->radarStationId();
-echo $location->city();
-var_dump($location->state());
+echo $location->radarStationId;
+echo $location->city;
+var_dump($location->state);
 
 
 /*
 ** Get any active alerts for the location and loop through them
 */
-$alerts = $location->activeAlerts()->get();
+$alerts = $location->activeAlerts->get();
 foreach($alerts as $alert) {
     var_dump($alert);
 }
@@ -118,29 +118,30 @@ foreach($alerts as $alert) {
 /*
 ** Get current observations from the nearest observation station to your location
 */
-$observations = $location->latestObservations();
+$observations = $location->latestObservations;
 $raw_data = $observations->raw();
 var_dump($raw_data);
 
 echo $observations->temperature(show_units: true);
-echo $observations->dewpoint();
+// echo $observations->temperature;
+echo $observations->dewpoint;
 // other methods are available for the other data points as well
 
 
 /*
 ** Get the current forecast for the location
 */
-$forecast = $location->forecast();
+$forecast = $location->forecast;
 var_dump($forecast->raw());
-var_dump($forecast->periods()->get());
+var_dump($forecast->periods->get());
 
 
 /*
 ** Get the current hourly forecast for the location
 */
-$hourly_forecast = $location->hourlyForecast();
+$hourly_forecast = $location->hourlyForecast;
 var_dump($hourly_forecast->raw());
-var_dump($hourly_forecast->periods()->get());
+var_dump($hourly_forecast->periods->get());
 
 
 /*
@@ -149,15 +150,15 @@ var_dump($hourly_forecast->periods()->get());
 */
 $office_id = "LZK";
 $forecast_office = $api->forecastOffice($office_id);
-echo $forecast_office->name();
-echo $forecast_office->phone();
-echo $forecast_office->email();
-echo $forecast_office->addresss();
-var_dump($forecast_office->counties());
-var_dump($forecast_office->forecastZones());
-var_dump($forecast_office->observationStations());
-var_dump($forecast_office->fireZones());
-var_dump($forecast_office->activeAlerts()->get());
+echo $forecast_office->name;
+echo $forecast_office->phone;
+echo $forecast_office->email;
+echo $forecast_office->addresss;
+var_dump($forecast_office->counties);
+var_dump($forecast_office->forecastZones);
+var_dump($forecast_office->observationStations);
+var_dump($forecast_office->fireZones);
+var_dump($forecast_office->activeAlerts->get());
 
 
 /*
@@ -166,10 +167,10 @@ var_dump($forecast_office->activeAlerts()->get());
 */
 $station_id = "KLIT";
 $observation_station = $api->observationStation($station_id);
-echo $observation_station->name();
-echo $observation_station->id();
-var_dump($observation_station->timezone());
-var_dump($observation_station->county());
-var_dump($observation_station->latestObservations());
-var_dump($observation_station->activeAlerts()->get());
+echo $observation_station->name;
+echo $observation_station->id;
+var_dump($observation_station->timezone);
+var_dump($observation_station->county);
+var_dump($observation_station->latestObservations);
+var_dump($observation_station->activeAlerts->get());
 ```

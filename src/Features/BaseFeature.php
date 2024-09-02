@@ -4,7 +4,9 @@ namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Traits\IsCallable;
+use AllowDynamicProperties;
 
+#[AllowDynamicProperties]
 class BaseFeature
 {
     use IsCallable;

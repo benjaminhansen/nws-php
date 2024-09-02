@@ -132,7 +132,7 @@ echo $observations->dewpoint();
 */
 $forecast = $location->forecast();
 var_dump($forecast->raw());
-var_dump($foreast->periods()->get());
+var_dump($forecast->periods()->get());
 
 
 /*

@@ -3,8 +3,7 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\Helpers;
-use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\{Helpers, Carbon};
 
 class ForecastPeriod extends BaseFeature
 {
@@ -48,14 +47,9 @@ class ForecastPeriod extends BaseFeature
         return $this->data->windSpeed;
     }
 
-    public function windDirectionDegrees()
+    public function windDirection()
     {
         return $this->data->windDirection;
-    }
-
-    public function windDirectionCardinal(): string
-    {
-        return Helpers::degrees_to_cardinals($this->data->windDirection);
     }
 
     public function shortForecast(): string

@@ -80,9 +80,8 @@ class Point extends BaseFeature
 
     public function radarStation(): RadarStation
     {
-        $id = $this->radarStationId();
         $base_url = $this->api->baseUrl();
-        $url = "{$base_url}/radar/stations/{$id}";
+        $url = "{$base_url}/radar/stations/{$this->radarStationId()}";
 
         return new RadarStation($this->api->get($url), $this->api);
     }
@@ -120,9 +119,7 @@ class Point extends BaseFeature
     public function activeAlerts(): Alerts
     {
         $base_url = $this->api->baseUrl();
-        $lat = $this->latitude();
-        $lon = $this->longitude();
-        $request_url = "{$base_url}/alerts/active?point={$lat},{$lon}";
+        $request_url = "{$base_url}/alerts/active?point={$this->latitude()},{$this->longitude()}";
 
         return new Alerts($this->api->get($request_url), $this->api);
     }

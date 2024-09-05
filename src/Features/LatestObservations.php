@@ -3,8 +3,7 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\Helpers;
-use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\{Helpers, Carbon};
 
 class LatestObservations extends BaseFeature
 {

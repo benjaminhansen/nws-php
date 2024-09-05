@@ -2,13 +2,7 @@
 
 namespace BenjaminHansen\NWS\Traits;
 
-use BenjaminHansen\NWS\Enums\AlertResponse;
-use BenjaminHansen\NWS\Enums\AlertUrgency;
-use BenjaminHansen\NWS\Enums\AlertCertainty;
-use BenjaminHansen\NWS\Enums\AlertSeverity;
-use BenjaminHansen\NWS\Enums\AlertCategory;
-use BenjaminHansen\NWS\Enums\AlertStatus;
-use BenjaminHansen\NWS\Enums\AlertMessageType;
+use BenjaminHansen\NWS\Enums\{AlertResponse, AlertUrgency, AlertCertainty, AlertSeverity, AlertCategory, AlertStatus, AlertMessageType};
 
 trait CanGetDescription
 {

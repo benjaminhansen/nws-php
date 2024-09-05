@@ -4,18 +4,11 @@ namespace BenjaminHansen\NWS;
 
 use Phpfastcache\Helper\Psr16Adapter;
 use GuzzleHttp\Client as HttpClient;
-use BenjaminHansen\NWS\Features\Point;
-use BenjaminHansen\NWS\Features\ForecastOffice;
-use BenjaminHansen\NWS\Features\ObservationStation;
-use BenjaminHansen\NWS\Features\ObservationStations;
-use BenjaminHansen\NWS\Features\Glossary;
-use BenjaminHansen\NWS\Features\ForecastZone;
-use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
-use BenjaminHansen\NWS\Exceptions\CacheException;
+use BenjaminHansen\NWS\Features\{Point, ForecastOffice, ObservationStation, ObservationStations, Glossary, ForecastZone};
+use BenjaminHansen\NWS\Exceptions\{ApiNotOkException, CacheException};
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
-use DateInterval;
-use DateTimeZone;
+use DateInterval, DateTimeZone;
 
 class Api
 {
@@ -31,16 +24,8 @@ class Api
 
     public function __construct(string $domain, string $email, string|DateTimeZone $timezone = null)
     {
-        if($timezone) {
-            // set the timezone that was passed into the constructor
-            $this->timezone($timezone);
-        } else {
-            // default the api requests to a reasonable timezone
-            $this->timezone('UTC');
-        }
-
-        // set our user agent for the API requests
-        $this->userAgent($domain, $email);
+        $this->timezone($timezone ?? 'UTC') // set the timezone that was provided, or default to a reasonable value
+             ->userAgent($domain, $email); // set our user agent for the API requests
 
         // build up our HTTP client for making requests to the API
         $this->client = new HttpClient([
@@ -239,12 +224,7 @@ class Api
     public function assertOk(string $message = null): self
     {
         if(!$this->ok()) {
-            if($message) {
-                throw new ApiNotOkException($message);
-            }
-
-            $status = $this->status();
-            throw new ApiNotOkException("NWS API is not OK: {$status}");
+            throw new ApiNotOkException($message ?? "NWS API is not OK: {$this->status()}");
         }
 
         return $this;
@@ -304,8 +284,7 @@ class Api
     {
         $zone_id = strtoupper($zone_id);
         $url = "{$this->baseUrl()}/zones?id={$zone_id}";
-        $data = $this->get($url)->features[0];
-        return new ForecastZone($data, $this);
+        return new ForecastZone($this->get($url)->features[0], $this);
     }
 
     /*

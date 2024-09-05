@@ -3,8 +3,7 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\Coordinate;
-use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\{Coordinate, Carbon};
 use Illuminate\Support\Collection;
 
 class ForecastHourly extends BaseFeature

@@ -2,109 +2,134 @@
 
 namespace BenjaminHansen\NWS;
 
-use Phpfastcache\Helper\Psr16Adapter;
-use GuzzleHttp\Client as HttpClient;
-use BenjaminHansen\NWS\Features\{Point, ForecastOffice, ObservationStation, ObservationStations, Glossary, ForecastZone};
-use BenjaminHansen\NWS\Exceptions\{ApiNotOkException, CacheException};
+use BenjaminHansen\NWS\Enums\CacheDriver;
+use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
+use BenjaminHansen\NWS\Exceptions\CacheException;
+use BenjaminHansen\NWS\Features\ForecastOffice;
+use BenjaminHansen\NWS\Features\ForecastZone;
+use BenjaminHansen\NWS\Features\Glossary;
+use BenjaminHansen\NWS\Features\ObservationStation;
+use BenjaminHansen\NWS\Features\ObservationStations;
+use BenjaminHansen\NWS\Features\Point;
 use BenjaminHansen\NWS\Support\Carbon;
+use DateInterval;
+use DateTimeZone;
+use GuzzleHttp\Client as HttpClient;
 use Illuminate\Support\Collection;
-use DateInterval, DateTimeZone;
+use Phpfastcache\Helper\Psr16Adapter;
 
 class Api
 {
-    private Psr16Adapter|null $cache = null;
-    private string $base_url = "https://api.weather.gov";
-    private string $user_agent;
-    private HttpClient $client;
-    private int|DateInterval $cache_lifetime = 3600;
-    private array $cache_exclusions = ['/alerts'];
-    private array $acceptable_http_codes = [200];
-    private DateTimeZone $timezone;
-    private string $cache_driver = 'Files';
+    private ?Psr16Adapter $cache = null;
 
-    public function __construct(string $domain, string $email, string|DateTimeZone $timezone = null)
+    private CacheDriver|string $cache_driver = CacheDriver::Files;
+
+    private int|DateInterval $cache_lifetime = 3600;
+
+    private string $base_url = 'https://api.weather.gov';
+
+    private string $user_agent;
+
+    private HttpClient $client;
+
+    private array $cache_exclusions = ['/alerts'];
+
+    private array $acceptable_http_codes = [200];
+
+    private DateTimeZone $timezone;
+
+    public function __construct(string $domain, string $email, string|DateTimeZone|null $timezone = null)
     {
         $this->timezone($timezone ?? 'UTC') // set the timezone that was provided, or default to a reasonable value
-             ->userAgent($domain, $email); // set our user agent for the API requests
+            ->userAgent($domain, $email); // set our user agent for the API requests
 
         // build up our HTTP client for making requests to the API
         $this->client = new HttpClient([
             'http_errors' => false,
             'headers' => [
-                'User-Agent' => $this->userAgent()
-            ]
+                'User-Agent' => $this->userAgent(),
+            ],
         ]);
     }
 
     /*
     **  get/set the user_agent for the API http client
     */
-    private function userAgent(string $domain = null, string $email = null): string|self
+    private function userAgent(?string $domain = null, ?string $email = null): string|self
     {
-        if($domain && $email) {
+        if ($domain && $email) {
             $this->user_agent = "({$domain}, {$email})";
+
             return $this;
-        } else {
-            return $this->user_agent;
         }
+
+        return $this->user_agent;
     }
 
     /*
     **  get/set the cache_lifetime used for the API's caching layer, if you opted for it.
     */
-    public function cacheLifetime(int|DateInterval $lifetime = null): string|self|DateInterval
+    public function cacheLifetime(int|DateInterval|null $lifetime = null): string|self|DateInterval
     {
-        if($lifetime) {
+        if ($lifetime) {
             $this->cache_lifetime = $lifetime;
+
             return $this;
-        } else {
-            return $this->cache_lifetime;
         }
+
+        return $this->cache_lifetime;
     }
 
     /*
     **  get/set the cache_driver used for the caching layer, if you opted for it.
     */
-    public function cacheDriver(string $driver = null): string|self
+    public function cacheDriver(?string $driver = null): string|self
     {
-        if($driver) {
+        if ($driver) {
             $this->cache_driver = $driver;
+
             return $this;
-        } else {
-            return $this->cache_driver;
         }
+
+        if($this->cache_driver instanceof CacheDriver) {
+            return $this->cache_driver->value;
+        }
+
+        return $this->cache_driver;
     }
 
     /*
     **  Opt-in for using the caching layer. This is STRONGLY recommended!
     */
-    public function useCache(int $lifetime = null, string $driver = null): self
+    public function useCache(?int $lifetime = null, ?string $driver = null): self
     {
-        if($lifetime) {
+        if ($lifetime) {
             $this->cacheLifetime($lifetime);
         }
 
-        if($driver) {
+        if ($driver) {
             $this->cacheDriver($driver);
         }
 
         // build up our cache to store data locally for a period of time
         $this->cache = new Psr16Adapter($this->cacheDriver());
         $this->cache_lifetime = $this->cacheLifetime();
+
         return $this;
     }
 
     /*
     **  get/set the base_url for all API requests made the NWS
     */
-    public function baseUrl(string $base_url = null): string|self
+    public function baseUrl(?string $base_url = null): string|self
     {
-        if($base_url) {
+        if ($base_url) {
             $this->base_url = $base_url;
+
             return $this;
-        } else {
-            return $this->base_url;
         }
+
+        return $this->base_url;
     }
 
     /*
@@ -112,29 +137,30 @@ class Api
     */
     public function clearCache(): self
     {
-        if(($this->cache && $this->cache->clear()) || !$this->cache) {
+        if (($this->cache && $this->cache->clear()) || ! $this->cache) {
             return $this;
         }
 
-        throw new CacheException("Failed to clear the cache!");
+        throw new CacheException('Failed to clear the cache!');
     }
 
     /*
     **  get/set the timezone used to cast all datetime values returned from the API
     */
-    public function timezone(string|DateTimeZone $timezone = null): DateTimeZone|self
+    public function timezone(string|DateTimeZone|null $timezone = null): DateTimeZone|self
     {
-        if($timezone) {
-            if(is_string($timezone)) {
+        if ($timezone) {
+            if (is_string($timezone)) {
                 // cast the timezone string to an object
                 $timezone = new DateTimeZone($timezone);
             }
 
             $this->timezone = $timezone;
+
             return $this;
-        } else {
-            return $this->timezone;
         }
+
+        return $this->timezone;
     }
 
     /*
@@ -146,11 +172,11 @@ class Api
     {
         // the user did not opt to use the cache, so make a direct request to the URL endpoint
         // and bypass all the following cache-related code, returning early
-        if(!$this->cache) {
+        if (! $this->cache) {
             $http_request = $this->client->get($url);
             $http_response_code = $http_request->getStatusCode();
 
-            if(!in_array($http_response_code, $this->acceptable_http_codes)) {
+            if (! in_array($http_response_code, $this->acceptable_http_codes)) {
                 // sometimes the NWS API likes to include URLs that are not actually valid, so those throw 404s
                 // this accounts for those
                 return false;
@@ -159,13 +185,13 @@ class Api
             return json_decode($http_request->getBody()->getContents());
         }
 
-        // key-ify the request URL to use as the unique ID in our cache
+        // slugify the request URL to use as the unique ID in our cache
         // thanks Laravel for the wonderful string helpers!!! :)
         $key = str_slug($url);
 
         // if there is a value in the cache for the given URL, return the cached data
         // returning early and bypassing the remaining code
-        if($this->cache->has($key)) {
+        if ($this->cache->has($key)) {
             return $this->cache->get($key);
         }
 
@@ -173,7 +199,7 @@ class Api
         $http_request = $this->client->get($url);
         $http_response_code = $http_request->getStatusCode();
 
-        if(!in_array($http_response_code, $this->acceptable_http_codes)) {
+        if (! in_array($http_response_code, $this->acceptable_http_codes)) {
             // sometimes the NWS API likes to include URLs that are not actually valid, so those throw 404s
             // this accounts for those
             return false;
@@ -181,13 +207,13 @@ class Api
 
         $data = json_decode($http_request->getBody()->getContents());
         $expires_timestamp = $http_request->getHeader('Expires')[0] ?? null;
-        if($expires_timestamp) {
+        if ($expires_timestamp) {
             // we have the expiration header from the API request so we can derive
             // a more specific cache lifetime for our own caching layer
             $expires = new Carbon($expires_timestamp);
             $expires->setTimezoneIfNot($this->timezone());
 
-            $now = new Carbon();
+            $now = new Carbon;
             $now->setTimezoneIfNot($this->timezone());
 
             $diff_interval = $now->diff($expires)->toDateInterval();
@@ -195,7 +221,7 @@ class Api
         }
 
         // if the URL is not in our cache exclusion array, we should cache it
-        if(!stripos_array($url, $this->cache_exclusions)) {
+        if (! stripos_array($url, $this->cache_exclusions)) {
             $this->cache->set($key, $data, $this->cacheLifetime());
         }
 
@@ -215,15 +241,15 @@ class Api
     */
     public function ok(): bool
     {
-        return strtolower($this->status()) === "ok";
+        return strtolower($this->status()) === 'ok';
     }
 
     /*
     **  Make sure that the API status is OK, otherwise bail out
     */
-    public function assertOk(string $message = null): self
+    public function assertOk(?string $message = null): self
     {
-        if(!$this->ok()) {
+        if (! $this->ok()) {
             throw new ApiNotOkException($message ?? "NWS API is not OK: {$this->status()}");
         }
 
@@ -236,6 +262,7 @@ class Api
     public function point(float $lat, float $lon): Point
     {
         $url = "{$this->baseUrl()}/points/{$lat},{$lon}";
+
         return new Point($this->get($url), $this);
     }
 
@@ -246,6 +273,7 @@ class Api
     {
         $observation_station = strtoupper($observation_station);
         $url = "{$this->baseUrl()}/stations/{$observation_station}";
+
         return new ObservationStation($this->get($url), $this);
     }
 
@@ -255,6 +283,7 @@ class Api
     public function observationStations(): ObservationStations
     {
         $url = "{$this->baseUrl()}/stations";
+
         return new ObservationStations($this->get($url), $this);
     }
 
@@ -265,6 +294,7 @@ class Api
     {
         $forecast_office = strtoupper($forecast_office);
         $url = "{$this->baseUrl()}/offices/{$forecast_office}";
+
         return new ForecastOffice($this->get($url), $this);
     }
 
@@ -274,6 +304,7 @@ class Api
     public function glossary(): Glossary
     {
         $url = "{$this->baseUrl()}/glossary";
+
         return new Glossary($this->get($url), $this);
     }
 
@@ -284,6 +315,7 @@ class Api
     {
         $zone_id = strtoupper($zone_id);
         $url = "{$this->baseUrl()}/zones?id={$zone_id}";
+
         return new ForecastZone($this->get($url)->features[0], $this);
     }
 
@@ -293,6 +325,7 @@ class Api
     public function zones(): Collection
     {
         $url = "{$this->baseUrl()}/zones";
+
         return collect($this->get($url)->features);
     }
 }

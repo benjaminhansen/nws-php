@@ -2,8 +2,8 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use DateTimeZone;
 use BenjaminHansen\NWS\Api;
+use DateTimeZone;
 
 class ObservationStation extends BaseFeature
 {
@@ -24,8 +24,9 @@ class ObservationStation extends BaseFeature
 
     public function latestObservations(): LatestObservations
     {
-        $base_url = $this->data->properties->{"@id"};
+        $base_url = $this->data->properties->{'@id'};
         $observation_url = "{$base_url}/observations/latest";
+
         return new LatestObservations($this->api->get($observation_url), $this->api);
     }
 

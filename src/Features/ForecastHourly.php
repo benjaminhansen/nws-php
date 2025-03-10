@@ -3,7 +3,8 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\{Coordinate, Carbon};
+use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\Coordinate;
 use Illuminate\Support\Collection;
 
 class ForecastHourly extends BaseFeature
@@ -42,10 +43,10 @@ class ForecastHourly extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->geometry->coordinates as $i => $coordinate_block) {
+        foreach ($this->data->geometry->coordinates as $i => $coordinate_block) {
             $return[$i] = [];
 
-            foreach($coordinate_block as $coordinate) {
+            foreach ($coordinate_block as $coordinate) {
                 $return[$i][] = new Coordinate($coordinate);
             }
         }

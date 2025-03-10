@@ -27,5 +27,8 @@
     "phpfastcache/phpfastcache": "^9.2",
     "illuminate/collections": "^11.6",
     "laravel/helpers": "^1.7"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.21"
   }
 }

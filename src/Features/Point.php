@@ -2,9 +2,9 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use DateTimeZone;
 use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\UsState;
+use DateTimeZone;
 
 class Point extends BaseFeature
 {
@@ -28,14 +28,24 @@ class Point extends BaseFeature
         return $this->properties_cwa();
     }
 
-    public function latitude(): string|int|float
+    public function latitude(?float $precision = null): string|int|float
     {
-        return $this->geometry_coordinates()[1];
+        $latitude = $this->geometry_coordinates()[1];
+        if($precision) {
+            return round($latitude, $precision);
+        }
+
+        return $latitude;
     }
 
-    public function longitude(): string|int|float
+    public function longitude(?float $precision = null): string|int|float
     {
-        return $this->geometry_coordinates()[0];
+        $longitude = $this->geometry_coordinates()[0];
+        if($precision) {
+            return round($longitude, $precision);
+        }
+
+        return $longitude;
     }
 
     public function county(): County

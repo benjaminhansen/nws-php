@@ -37,7 +37,7 @@ class Alerts extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->features as $alert) {
+        foreach ($this->data->features as $alert) {
             $return[] = new Alert($alert, $this->api);
         }
 

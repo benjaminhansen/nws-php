@@ -3,7 +3,8 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\{Helpers, Carbon};
+use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\Helpers;
 
 class ForecastPeriod extends BaseFeature
 {
@@ -57,15 +58,15 @@ class ForecastPeriod extends BaseFeature
         return $this->data->shortForecast;
     }
 
-    public function longForecast(): string|null
+    public function longForecast(): ?string
     {
         return $this->data->detailedForecast;
     }
 
-    public function dewpoint(string $unit = "f", int $decimal_points = 0)
+    public function dewpoint(string $unit = 'f', int $decimal_points = 0)
     {
-        return match($unit) {
-            "f" => round(Helpers::celcius_to_fahrenheit($this->data->dewpoint->value), $decimal_points),
+        return match ($unit) {
+            'f' => round(Helpers::celcius_to_fahrenheit($this->data->dewpoint->value), $decimal_points),
             default => round($this->data->dewpoint->value, $decimal_points)
         };
     }

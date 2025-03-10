@@ -3,7 +3,13 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Enums\{AlertResponse, AlertUrgency, AlertCertainty, AlertSeverity, AlertCategory, AlertStatus, AlertMessageType};
+use BenjaminHansen\NWS\Enums\AlertCategory;
+use BenjaminHansen\NWS\Enums\AlertCertainty;
+use BenjaminHansen\NWS\Enums\AlertMessageType;
+use BenjaminHansen\NWS\Enums\AlertResponse;
+use BenjaminHansen\NWS\Enums\AlertSeverity;
+use BenjaminHansen\NWS\Enums\AlertStatus;
+use BenjaminHansen\NWS\Enums\AlertUrgency;
 use BenjaminHansen\NWS\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -114,7 +120,7 @@ class Alert extends BaseFeature
         $return = [];
 
         $zones = $this->properties_affectedZones();
-        foreach($zones as $zone_url) {
+        foreach ($zones as $zone_url) {
             $return[] = new ForecastZone($this->api->get($zone_url), $this->api);
         }
 
@@ -124,6 +130,7 @@ class Alert extends BaseFeature
     public function affectedZone(int $i = 0): ForecastZone
     {
         $zone = $this->properties_affectedZones()[$i];
+
         return new ForecastZone($this->api->get($zone), $this->api);
     }
 

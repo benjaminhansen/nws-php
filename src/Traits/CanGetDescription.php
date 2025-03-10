@@ -2,12 +2,17 @@
 
 namespace BenjaminHansen\NWS\Traits;
 
-use BenjaminHansen\NWS\Enums\{AlertResponse, AlertUrgency, AlertCertainty, AlertSeverity, AlertCategory, AlertStatus, AlertMessageType};
+use BenjaminHansen\NWS\Enums\AlertCategory;
+use BenjaminHansen\NWS\Enums\AlertCertainty;
+use BenjaminHansen\NWS\Enums\AlertMessageType;
+use BenjaminHansen\NWS\Enums\AlertResponse;
+use BenjaminHansen\NWS\Enums\AlertSeverity;
+use BenjaminHansen\NWS\Enums\AlertStatus;
+use BenjaminHansen\NWS\Enums\AlertUrgency;
 
 trait CanGetDescription
 {
-    public static function fromName(string $name):
-    AlertResponse|AlertUrgency|AlertCertainty|AlertSeverity|AlertCategory|AlertStatus|AlertMessageType
+    public static function fromName(string $name): AlertResponse|AlertUrgency|AlertCertainty|AlertSeverity|AlertCategory|AlertStatus|AlertMessageType
     {
         return constant("self::$name");
     }

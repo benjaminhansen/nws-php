@@ -3,7 +3,8 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\{Helpers, Carbon};
+use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\Helpers;
 
 class Forecast extends BaseFeature
 {
@@ -22,14 +23,14 @@ class Forecast extends BaseFeature
         return (new Carbon($this->properties_generatedAt()))->setTimezoneIfNot($this->api->timezone());
     }
 
-    public function elevation(string $unit = "FT", int $decimal_places = 0, bool $show_unit = false): int|float|string
+    public function elevation(string $unit = 'FT', int $decimal_places = 0, bool $show_unit = false): int|float|string
     {
-        $value = match(strtoupper($unit)) {
-            "FT" => round(Helpers::meters_to_feet($this->properties_elevation()->value), $decimal_places),
+        $value = match (strtoupper($unit)) {
+            'FT' => round(Helpers::meters_to_feet($this->properties_elevation()->value), $decimal_places),
             default => round($this->properties_elevation()->value, $decimal_places)
         };
 
-        if($show_unit) {
+        if ($show_unit) {
             $value = "{$value} {$unit}";
         }
 

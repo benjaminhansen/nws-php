@@ -2,8 +2,8 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use DateTimeZone;
 use BenjaminHansen\NWS\Api;
+use DateTimeZone;
 use Illuminate\Support\Collection;
 
 class ForecastZone extends BaseFeature
@@ -22,7 +22,7 @@ class ForecastZone extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_timeZone() as $timezone) {
+        foreach ($this->properties_timeZone() as $timezone) {
             $return[] = new DateTimeZone($timezone);
         }
 
@@ -48,7 +48,7 @@ class ForecastZone extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_observationStations() as $station) {
+        foreach ($this->properties_observationStations() as $station) {
             $return[] = new ObservationStation($this->api->get($station), $this->api);
         }
 
@@ -64,7 +64,7 @@ class ForecastZone extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_forecastOffices() as $office) {
+        foreach ($this->properties_forecastOffices() as $office) {
             $return[] = new ForecastOffice($this->api->get($office), $this->api);
         }
 

@@ -17,16 +17,16 @@ class ObservationStations extends BaseFeature
         return count($this->data->features);
     }
 
-    public function get(int $i = null): Collection|ObservationStation
+    public function get(?int $i = null): Collection|ObservationStation
     {
         $return = [];
 
-        foreach($this->data->features as $station) {
+        foreach ($this->data->features as $station) {
             $return[] = new ObservationStation($station, $this->api);
         }
 
         $collection = collect($return);
-        if(is_null($i)) {
+        if (is_null($i)) {
             return $collection;
         }
 

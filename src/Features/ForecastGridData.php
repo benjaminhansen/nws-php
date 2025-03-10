@@ -3,7 +3,8 @@
 namespace BenjaminHansen\NWS\Features;
 
 use BenjaminHansen\NWS\Api;
-use BenjaminHansen\NWS\Support\{Helpers, Carbon};
+use BenjaminHansen\NWS\Support\Carbon;
+use BenjaminHansen\NWS\Support\Helpers;
 use Illuminate\Support\Collection;
 
 class ForecastGridData extends BaseFeature
@@ -47,16 +48,16 @@ class ForecastGridData extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_temperature()->values as $temperature) {
-            $validTime = (new Carbon(explode("/", $temperature->validTime)[0]))->setTimezoneIfNot($this->api->timezone());
-            $value = match($unit) {
+        foreach ($this->properties_temperature()->values as $temperature) {
+            $validTime = (new Carbon(explode('/', $temperature->validTime)[0]))->setTimezoneIfNot($this->api->timezone());
+            $value = match ($unit) {
                 'f' => round(Helpers::celcius_to_fahrenheit($temperature->value), $decimal_points),
                 default => round($temperature->value, $decimal_points)
             };
 
-            $return[] = (object)[
+            $return[] = (object) [
                 'validTime' => $validTime,
-                'value' => $value
+                'value' => $value,
             ];
         }
 

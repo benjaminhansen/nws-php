@@ -6,7 +6,7 @@ class Helpers
 {
     public static function celcius_to_fahrenheit($c)
     {
-        if($c) {
+        if ($c) {
             return $c * 1.8 + 32;
         }
 
@@ -42,6 +42,7 @@ class Helpers
     {
         $directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
         $index = ($d + 11.25) / 22.5;
-        return $directions[(int)$index % 16];
+
+        return $directions[(int) $index % 16];
     }
 }

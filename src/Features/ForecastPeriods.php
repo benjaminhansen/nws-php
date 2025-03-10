@@ -21,7 +21,7 @@ class ForecastPeriods extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data as $period) {
+        foreach ($this->data as $period) {
             $return[] = new ForecastPeriod($period, $this->api);
         }
 

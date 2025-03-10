@@ -2,8 +2,8 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use DateTimeZone;
 use BenjaminHansen\NWS\Api;
+use DateTimeZone;
 use Illuminate\Support\Collection;
 
 class FireZone extends BaseFeature
@@ -27,7 +27,7 @@ class FireZone extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_forecastOffices() as $office) {
+        foreach ($this->properties_forecastOffices() as $office) {
             $return[] = new ForecastOffice($this->api->get($office), $this->api);
         }
 

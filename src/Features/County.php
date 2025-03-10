@@ -2,9 +2,9 @@
 
 namespace BenjaminHansen\NWS\Features;
 
-use DateTimeZone;
 use BenjaminHansen\NWS\Api;
 use BenjaminHansen\NWS\Support\UsState;
+use DateTimeZone;
 use Illuminate\Support\Collection;
 
 class County extends BaseFeature
@@ -38,7 +38,7 @@ class County extends BaseFeature
     {
         $return = [];
 
-        foreach($this->properties_timeZone() as $timezone) {
+        foreach ($this->properties_timeZone() as $timezone) {
             $return[] = new DateTimeZone($timezone);
         }
 

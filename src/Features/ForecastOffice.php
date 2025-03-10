@@ -46,7 +46,7 @@ class ForecastOffice extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->responsibleCounties as $county) {
+        foreach ($this->data->responsibleCounties as $county) {
             $return[] = new County($this->api->get($county), $this->api);
         }
 
@@ -57,7 +57,7 @@ class ForecastOffice extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->responsibleForecastZones as $zone) {
+        foreach ($this->data->responsibleForecastZones as $zone) {
             $return[] = new ForecastZone($this->api->get($zone), $this->api);
         }
 
@@ -68,7 +68,7 @@ class ForecastOffice extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->approvedObservationStations as $station) {
+        foreach ($this->data->approvedObservationStations as $station) {
             $return[] = new ObservationStation($this->api->get($station), $this->api);
         }
 
@@ -79,7 +79,7 @@ class ForecastOffice extends BaseFeature
     {
         $return = [];
 
-        foreach($this->data->responsibleFireZones as $zone) {
+        foreach ($this->data->responsibleFireZones as $zone) {
             $return[] = new FireZone($this->api->get($zone), $this->api);
         }
 

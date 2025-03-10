@@ -11,10 +11,10 @@ trait IsCallable
 
     public function __call($name, $args)
     {
-        $method_parts = explode("_", $name);
+        $method_parts = explode('_', $name);
         $return = $this->data;
 
-        foreach($method_parts as $part) {
+        foreach ($method_parts as $part) {
             $return = $return->{$part};
         }
 
@@ -23,7 +23,7 @@ trait IsCallable
 
     public function __get($name)
     {
-        if(method_exists($this, $name)) {
+        if (method_exists($this, $name)) {
             return $this->$name();
         }
 

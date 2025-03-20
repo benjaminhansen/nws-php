@@ -8,12 +8,7 @@ class UsState
 {
     use IsCallable;
 
-    private $data;
-
-    public function __construct($data)
-    {
-        $this->data = $data;
-    }
+    public function __construct(private $data) {}
 
     public function abbreviation(): string
     {

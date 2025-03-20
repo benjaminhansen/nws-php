@@ -40,8 +40,8 @@ class Api
 
     public function __construct(string $domain, string $email, string|DateTimeZone|null $timezone = null)
     {
-        $this->timezone($timezone ?? 'UTC') // set the timezone that was provided, or default to a reasonable value
-            ->userAgent($domain, $email); // set our user agent for the API requests
+        $this->timezone($timezone ?? 'UTC'); // set the timezone that was provided, or default to a reasonable value
+        $this->userAgent($domain, $email); // set our user agent for the API requests
 
         // build up our HTTP client for making requests to the API
         $this->client = new HttpClient([
@@ -91,7 +91,7 @@ class Api
             return $this;
         }
 
-        if($this->cache_driver instanceof CacheDriver) {
+        if ($this->cache_driver instanceof CacheDriver) {
             return $this->cache_driver->value;
         }
 
@@ -114,6 +114,16 @@ class Api
         // build up our cache to store data locally for a period of time
         $this->cache = new Psr16Adapter($this->cacheDriver());
         $this->cache_lifetime = $this->cacheLifetime();
+
+        return $this;
+    }
+
+    /*
+    **  Opt-out of using the caching layer. This is NOT recommended for production usage!
+    */
+    public function noCache(): self
+    {
+        $this->cache = null;
 
         return $this;
     }

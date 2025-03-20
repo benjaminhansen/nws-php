@@ -31,7 +31,7 @@ class Point extends BaseFeature
     public function latitude(?float $precision = null): string|int|float
     {
         $latitude = $this->geometry_coordinates()[1];
-        if($precision) {
+        if ($latitude && $precision) {
             return round($latitude, $precision);
         }
 
@@ -41,7 +41,7 @@ class Point extends BaseFeature
     public function longitude(?float $precision = null): string|int|float
     {
         $longitude = $this->geometry_coordinates()[0];
-        if($precision) {
+        if ($longitude && $precision) {
             return round($longitude, $precision);
         }
 

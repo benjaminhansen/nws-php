@@ -11,13 +11,5 @@ class BaseFeature
 {
     use IsCallable;
 
-    public object $data;
-
-    public Api $api;
-
-    public function __construct(object $data, Api $api)
-    {
-        $this->data = $data;
-        $this->api = $api;
-    }
+    public function __construct(public object $data, public Api $api) {}
 }

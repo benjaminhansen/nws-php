@@ -178,7 +178,7 @@ class Api
     **  are either returned from the local cache or are retrieved from the NWS API endpoint to be returned directly
     **  or stashed in the cache first and then returned to the user.
     */
-    public function get(string $url): object|bool
+    public function get(string $url): object|bool|null
     {
         // the user did not opt to use the cache, so make a direct request to the URL endpoint
         // and bypass all the following cache-related code, returning early
@@ -243,7 +243,9 @@ class Api
     */
     public function status(): string
     {
-        return trim($this->get($this->base_url)->status);
+        $http_request = $this->client->get($this->baseUrl());
+        $http_response_code = $http_request->getStatusCode();
+        return $http_response_code === 200 ? 'OK' : 'NOT OK';
     }
 
     /*

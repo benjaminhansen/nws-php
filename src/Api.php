@@ -286,6 +286,22 @@ class Api
     }
 
     /*
+    **  Alias for point()
+    */
+    public function getLocation(float $lat, float $lon): Point
+    {
+        return $this->point($lat, $lon);
+    }
+
+    /*
+    **  Alias for baseUrl()
+    */
+    public function getBaseUrl(): string
+    {
+        return $this->baseUrl();
+    }
+
+    /*
     **  Get a specific observation station and its corresponding weather data
     */
     public function observationStation(string $observation_station): ObservationStation

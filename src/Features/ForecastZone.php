@@ -75,4 +75,43 @@ class ForecastZone extends BaseFeature
     {
         return $this->forecastOffices()->get($i);
     }
+
+    /*
+    **  Parse the zone type (e.g. "forecast", "fire", "land") from the zone's @id URL.
+    */
+    public function type(): string
+    {
+        $path = parse_url($this->data->properties->{'@id'}, PHP_URL_PATH);
+        $parts = explode('/', trim($path, '/'));
+
+        // path structure: zones/{type}/{id}
+        return $parts[1] ?? 'forecast';
+    }
+
+    public function forecast(): ZoneForecast
+    {
+        $url = "{$this->data->properties->{'@id'}}/forecast";
+
+        return new ZoneForecast($this->api->get($url), $this->api);
+    }
+
+    /*
+    **  Returns recent observations for this zone. Only applies to zones of type "forecast".
+    */
+    public function observationsFeed(): Observations
+    {
+        $url = "{$this->api->baseUrl()}/zones/forecast/{$this->id()}/observations";
+
+        return new Observations($this->api->get($url), $this->api);
+    }
+
+    /*
+    **  Returns observation stations serving this zone. Only applies to zones of type "forecast".
+    */
+    public function stationsFeed(): ObservationStations
+    {
+        $url = "{$this->api->baseUrl()}/zones/forecast/{$this->id()}/stations";
+
+        return new ObservationStations($this->api->get($url), $this->api);
+    }
 }

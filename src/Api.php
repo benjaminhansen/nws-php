@@ -5,12 +5,18 @@ namespace BenjaminHansen\NWS;
 use BenjaminHansen\NWS\Enums\CacheDriver;
 use BenjaminHansen\NWS\Exceptions\ApiNotOkException;
 use BenjaminHansen\NWS\Exceptions\CacheException;
+use BenjaminHansen\NWS\Features\Alert;
+use BenjaminHansen\NWS\Features\Alerts;
 use BenjaminHansen\NWS\Features\ForecastOffice;
 use BenjaminHansen\NWS\Features\ForecastZone;
 use BenjaminHansen\NWS\Features\Glossary;
 use BenjaminHansen\NWS\Features\ObservationStation;
 use BenjaminHansen\NWS\Features\ObservationStations;
 use BenjaminHansen\NWS\Features\Point;
+use BenjaminHansen\NWS\Features\RadarStations;
+use BenjaminHansen\NWS\Features\TextProduct;
+use BenjaminHansen\NWS\Features\TextProducts;
+use BenjaminHansen\NWS\Features\ZoneForecast;
 use BenjaminHansen\NWS\Support\Carbon;
 use DateInterval;
 use DateTimeZone;
@@ -245,6 +251,7 @@ class Api
     {
         $http_request = $this->client->get($this->baseUrl());
         $http_response_code = $http_request->getStatusCode();
+
         return $http_response_code === 200 ? 'OK' : 'NOT OK';
     }
 
@@ -339,5 +346,174 @@ class Api
         $url = "{$this->baseUrl()}/zones";
 
         return collect($this->get($url)->features);
+    }
+
+    /*
+    **  Get the zone forecast for a specific zone type and ID
+    */
+    public function zoneForecast(string $type, string $zone_id): ZoneForecast
+    {
+        $type = strtolower($type);
+        $zone_id = strtoupper($zone_id);
+        $url = "{$this->baseUrl()}/zones/{$type}/{$zone_id}/forecast";
+
+        return new ZoneForecast($this->get($url), $this);
+    }
+
+    /*
+    **  Get a specific alert by its ID
+    */
+    public function alert(string $id): Alert
+    {
+        $url = "{$this->baseUrl()}/alerts/{$id}";
+
+        return new Alert($this->get($url), $this);
+    }
+
+    /*
+    **  Query all alerts (active and inactive) with optional filters.
+    **  Supported params: active, start, end, status, message_type, event, code, area, point, region, region_type, zone, urgency, severity, certainty, limit, cursor
+    */
+    public function alerts(array $params = []): Alerts
+    {
+        $url = "{$this->baseUrl()}/alerts";
+
+        if (! empty($params)) {
+            $url .= '?'.http_build_query($params);
+        }
+
+        return new Alerts($this->get($url), $this);
+    }
+
+    /*
+    **  Get a count of currently active alerts broken down by category
+    */
+    public function alertsCount(): object
+    {
+        $url = "{$this->baseUrl()}/alerts/active/count";
+
+        return $this->get($url);
+    }
+
+    /*
+    **  Get active alerts for a US state or territory (e.g. "CA", "TX")
+    */
+    public function alertsForArea(string $area): Alerts
+    {
+        $area = strtoupper($area);
+        $url = "{$this->baseUrl()}/alerts/active/area/{$area}";
+
+        return new Alerts($this->get($url), $this);
+    }
+
+    /*
+    **  Get active alerts for a marine region (e.g. "AL", "AT", "GL", "GM", "PA", "PI")
+    */
+    public function alertsForRegion(string $region): Alerts
+    {
+        $region = strtoupper($region);
+        $url = "{$this->baseUrl()}/alerts/active/region/{$region}";
+
+        return new Alerts($this->get($url), $this);
+    }
+
+    /*
+    **  Get all recognized alert event type strings
+    */
+    public function alertTypes(): Collection
+    {
+        $url = "{$this->baseUrl()}/alerts/types";
+
+        return collect($this->get($url)->eventTypes);
+    }
+
+    /*
+    **  Get a specific text product by its ID
+    */
+    public function textProduct(string $id): TextProduct
+    {
+        $url = "{$this->baseUrl()}/products/{$id}";
+
+        return new TextProduct($this->get($url), $this);
+    }
+
+    /*
+    **  Query text products with optional filters.
+    **  Supported params: location, start, end, office, wmoid, productCode, limit
+    */
+    public function textProducts(array $params = []): TextProducts
+    {
+        $url = "{$this->baseUrl()}/products";
+
+        if (! empty($params)) {
+            $url .= '?'.http_build_query($params);
+        }
+
+        return new TextProducts($this->get($url), $this);
+    }
+
+    /*
+    **  Get all valid text product type codes (e.g. "AFD", "HWO")
+    */
+    public function textProductTypes(): Collection
+    {
+        $url = "{$this->baseUrl()}/products/types";
+
+        return collect($this->get($url)->{'@graph'});
+    }
+
+    /*
+    **  Get all valid text product issuing locations, keyed by location code
+    */
+    public function textProductLocations(): Collection
+    {
+        $url = "{$this->baseUrl()}/products/locations";
+
+        return collect((array) $this->get($url)->locations);
+    }
+
+    /*
+    **  Get all text products of a given type code (e.g. "AFD")
+    */
+    public function textProductsByType(string $type): TextProducts
+    {
+        $type = strtoupper($type);
+        $url = "{$this->baseUrl()}/products/types/{$type}";
+
+        return new TextProducts($this->get($url), $this);
+    }
+
+    /*
+    **  Get text products of a given type issued by a specific office location
+    */
+    public function textProductsByTypeAndLocation(string $type, string $location): TextProducts
+    {
+        $type = strtoupper($type);
+        $location = strtoupper($location);
+        $url = "{$this->baseUrl()}/products/types/{$type}/locations/{$location}";
+
+        return new TextProducts($this->get($url), $this);
+    }
+
+    /*
+    **  Get the latest text products of a given type from a specific office location
+    */
+    public function latestTextProducts(string $type, string $location): TextProducts
+    {
+        $type = strtoupper($type);
+        $location = strtoupper($location);
+        $url = "{$this->baseUrl()}/products/types/{$type}/locations/{$location}/latest";
+
+        return new TextProducts($this->get($url), $this);
+    }
+
+    /*
+    **  Get all radar stations
+    */
+    public function radarStations(): RadarStations
+    {
+        $url = "{$this->baseUrl()}/radar/stations";
+
+        return new RadarStations($this->get($url), $this);
     }
 }

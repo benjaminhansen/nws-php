@@ -85,4 +85,25 @@ class ForecastOffice extends BaseFeature
 
         return collect($return);
     }
+
+    public function headlines(): Collection
+    {
+        $url = "{$this->data->id}/headlines";
+        $data = $this->api->get($url);
+
+        $return = [];
+
+        foreach ($data->{'@graph'} ?? [] as $headline) {
+            $return[] = new OfficeHeadline($headline, $this->api);
+        }
+
+        return collect($return);
+    }
+
+    public function headline(string $id): OfficeHeadline
+    {
+        $url = "{$this->data->id}/headlines/{$id}";
+
+        return new OfficeHeadline($this->api->get($url), $this->api);
+    }
 }

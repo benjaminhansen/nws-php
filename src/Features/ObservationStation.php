@@ -30,6 +30,26 @@ class ObservationStation extends BaseFeature
         return new LatestObservations($this->api->get($observation_url), $this->api);
     }
 
+    public function observations(array $params = []): Observations
+    {
+        $base_url = $this->data->properties->{'@id'};
+        $url = "{$base_url}/observations";
+
+        if (! empty($params)) {
+            $url .= '?'.http_build_query($params);
+        }
+
+        return new Observations($this->api->get($url), $this->api);
+    }
+
+    public function observationAt(string $time): LatestObservations
+    {
+        $base_url = $this->data->properties->{'@id'};
+        $url = "{$base_url}/observations/".urlencode($time);
+
+        return new LatestObservations($this->api->get($url), $this->api);
+    }
+
     public function county(): County
     {
         return new County($this->api->get($this->properties_county()), $this->api);

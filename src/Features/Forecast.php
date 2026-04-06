@@ -15,7 +15,7 @@ class Forecast extends BaseFeature
 
     public function updatedAt(): Carbon
     {
-        return (new Carbon($this->properties_updated()))->setTimezoneIfNot($this->api->timezone());
+        return (new Carbon($this->properties_updateTime()))->setTimezoneIfNot($this->api->timezone());
     }
 
     public function createdAt(): Carbon
